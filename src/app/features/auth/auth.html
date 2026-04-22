@@ -1,0 +1,158 @@
+<div class="min-h-screen bg-surface-alt flex items-center justify-center px-4 py-16">
+  <div class="w-full max-w-md">
+
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <span class="text-4xl" aria-hidden="true">🛒</span>
+      <h1 class="text-xl font-black text-foreground mt-2">
+        BAZAR<span class="text-primary ml-1">Comores</span>
+      </h1>
+      <p class="text-muted text-sm mt-1">Votre épicerie comorienne en ligne</p>
+    </div>
+
+    <!-- Card -->
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+
+      <!-- Tabs -->
+      <div class="grid grid-cols-2 border-b border-border">
+        <button type="button"
+                (click)="switchTab('login')"
+                [class]="'py-4 text-sm font-semibold transition-colors ' +
+                         (activeTab() === 'login'
+                           ? 'text-primary border-b-2 border-primary bg-white'
+                           : 'text-muted hover:text-foreground bg-surface-alt')"
+                [attr.aria-selected]="activeTab() === 'login'">
+          Se connecter
+        </button>
+        <button type="button"
+                (click)="switchTab('register')"
+                [class]="'py-4 text-sm font-semibold transition-colors ' +
+                         (activeTab() === 'register'
+                           ? 'text-primary border-b-2 border-primary bg-white'
+                           : 'text-muted hover:text-foreground bg-surface-alt')"
+                [attr.aria-selected]="activeTab() === 'register'">
+          Créer un compte
+        </button>
+      </div>
+
+      <div class="p-6">
+
+        <!-- ── Connexion ── -->
+        @if (activeTab() === 'login') {
+          <form [formGroup]="loginForm" (ngSubmit)="submitLogin()" novalidate
+                class="flex flex-col gap-4">
+
+            <div>
+              <label for="login-email" class="block text-sm font-medium text-foreground mb-1.5">
+                Adresse e-mail
+              </label>
+              <input id="login-email" type="email" formControlName="email"
+                     placeholder="votre@email.com"
+                     class="w-full px-4 py-2.5 rounded-xl border-2 text-sm text-foreground
+                            placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary
+                            transition-colors"
+                     [class.border-error]="hasError('login', 'email')"
+                     [class.border-border]="!hasError('login', 'email')" />
+              @if (hasError('login', 'email')) {
+                <p class="text-xs text-error mt-1">E-mail invalide</p>
+              }
+            </div>
+
+            <div>
+              <label for="login-pwd" class="block text-sm font-medium text-foreground mb-1.5">
+                Mot de passe
+              </label>
+              <input id="login-pwd" type="password" formControlName="password"
+                     placeholder="••••••••"
+                     class="w-full px-4 py-2.5 rounded-xl border-2 text-sm text-foreground
+                            placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary
+                            transition-colors"
+                     [class.border-error]="hasError('login', 'password')"
+                     [class.border-border]="!hasError('login', 'password')" />
+              @if (hasError('login', 'password')) {
+                <p class="text-xs text-error mt-1">Minimum 6 caractères</p>
+              }
+            </div>
+
+            <button type="submit"
+                    class="w-full py-3 rounded-xl bg-primary text-white font-semibold text-sm
+                           hover:bg-primary-hover active:scale-[0.98] transition-all mt-1
+                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+              Se connecter
+            </button>
+
+          </form>
+        }
+
+        <!-- ── Inscription ── -->
+        @if (activeTab() === 'register') {
+          <form [formGroup]="registerForm" (ngSubmit)="submitRegister()" novalidate
+                class="flex flex-col gap-4">
+
+            <div>
+              <label for="reg-name" class="block text-sm font-medium text-foreground mb-1.5">
+                Nom complet
+              </label>
+              <input id="reg-name" type="text" formControlName="name"
+                     placeholder="Votre nom"
+                     class="w-full px-4 py-2.5 rounded-xl border-2 text-sm text-foreground
+                            placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary
+                            transition-colors"
+                     [class.border-error]="hasError('register', 'name')"
+                     [class.border-border]="!hasError('register', 'name')" />
+            </div>
+
+            <div>
+              <label for="reg-email" class="block text-sm font-medium text-foreground mb-1.5">
+                Adresse e-mail
+              </label>
+              <input id="reg-email" type="email" formControlName="email"
+                     placeholder="votre@email.com"
+                     class="w-full px-4 py-2.5 rounded-xl border-2 text-sm text-foreground
+                            placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary
+                            transition-colors"
+                     [class.border-error]="hasError('register', 'email')"
+                     [class.border-border]="!hasError('register', 'email')" />
+              @if (hasError('register', 'email')) {
+                <p class="text-xs text-error mt-1">E-mail invalide</p>
+              }
+            </div>
+
+            <div>
+              <label for="reg-pwd" class="block text-sm font-medium text-foreground mb-1.5">
+                Mot de passe
+              </label>
+              <input id="reg-pwd" type="password" formControlName="password"
+                     placeholder="Minimum 6 caractères"
+                     class="w-full px-4 py-2.5 rounded-xl border-2 text-sm text-foreground
+                            placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary
+                            transition-colors"
+                     [class.border-error]="hasError('register', 'password')"
+                     [class.border-border]="!hasError('register', 'password')" />
+              @if (hasError('register', 'password')) {
+                <p class="text-xs text-error mt-1">Minimum 6 caractères</p>
+              }
+            </div>
+
+            <button type="submit"
+                    class="w-full py-3 rounded-xl bg-primary text-white font-semibold text-sm
+                           hover:bg-primary-hover active:scale-[0.98] transition-all mt-1
+                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+              Créer mon compte
+            </button>
+
+          </form>
+        }
+
+      </div>
+    </div>
+
+    <p class="text-center text-xs text-muted mt-6">
+      En continuant, vous acceptez nos
+      <a routerLink="/cgu" class="text-primary underline hover:no-underline">CGU</a>
+      et notre
+      <a routerLink="/confidentialite" class="text-primary underline hover:no-underline">politique de confidentialité</a>.
+    </p>
+
+  </div>
+</div>

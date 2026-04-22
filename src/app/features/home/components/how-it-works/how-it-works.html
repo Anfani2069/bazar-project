@@ -1,0 +1,67 @@
+<section class="py-16 bg-surface-alt" aria-label="Comment ça marche">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <p class="text-xs font-bold text-accent uppercase tracking-widest mb-2">Simple & rapide</p>
+      <h2 class="text-2xl sm:text-3xl font-black text-foreground">
+        Commander en <span class="text-primary">4 étapes</span>
+      </h2>
+      <p class="text-muted text-sm mt-2 max-w-md mx-auto">
+        De votre canapé en France à la table de vos proches aux Comores.
+      </p>
+    </div>
+
+    <!-- Steps grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+
+      <!-- Ligne connecteur desktop -->
+      <div class="hidden lg:block absolute top-12 left-[12.5%] right-[12.5%] h-px
+                  bg-gradient-to-r from-transparent via-border to-transparent"
+           aria-hidden="true"></div>
+
+      @for (step of steps; track step.number; let last = $last) {
+        <div class="flex flex-col items-center text-center gap-4">
+
+          <!-- Numéro + icône -->
+          <div class="relative">
+            <div class="card-lift w-24 h-24 rounded-2xl bg-white border-2 border-border shadow-sm
+                        flex flex-col items-center justify-center gap-1
+                        group-hover:border-primary transition-colors">
+              <span class="text-3xl" aria-hidden="true">{{ step.icon }}</span>
+              <span class="text-xs font-black text-primary/30 tracking-widest">{{ step.number }}</span>
+            </div>
+            <!-- Point de connexion -->
+            <div class="hidden lg:block absolute top-1/2 -right-4 -translate-y-1/2
+                        w-2 h-2 rounded-full bg-primary/30"
+                 aria-hidden="true"></div>
+          </div>
+
+          <!-- Texte -->
+          <div>
+            <h3 class="text-sm font-bold text-foreground mb-1">{{ step.title }}</h3>
+            <p class="text-xs text-muted leading-relaxed">{{ step.description }}</p>
+          </div>
+
+        </div>
+      }
+
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center mt-12">
+      <a routerLink="/comment-ca-marche"
+         class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-white
+                text-sm font-semibold hover:bg-primary-hover transition-colors
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+        En savoir plus
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+    </div>
+
+  </div>
+</section>

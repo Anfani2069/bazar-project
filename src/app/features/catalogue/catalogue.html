@@ -1,0 +1,75 @@
+<div class="min-h-screen bg-surface-alt">
+
+  <!-- Page hero -->
+  <div class="bg-primary py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <p class="text-xs font-bold text-accent uppercase tracking-widest mb-2">Boutique</p>
+      <h1 class="text-3xl font-black text-white">Catalogue des produits</h1>
+      <p class="text-white/60 text-sm mt-1">
+        {{ filteredProducts().length }} produit{{ filteredProducts().length > 1 ? 's' : '' }} disponible{{ filteredProducts().length > 1 ? 's' : '' }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Toolbar sticky -->
+  <div class="sticky top-0 z-20 bg-white border-b border-border shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3
+                flex items-center gap-3">
+
+      <!-- Catégories pills scrollables -->
+      <div class="flex gap-2 overflow-x-auto flex-1
+                  [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+           role="group" aria-label="Filtrer par catégorie">
+        @for (cat of categories; track cat) {
+          <button type="button"
+                  (click)="setCategory(cat)"
+                  [class]="'shrink-0 px-4 py-1.5 rounded-full text-sm font-medium border-2 transition-all ' +
+                           (activeCategory() === cat
+                             ? 'bg-primary text-white border-primary shadow-sm'
+                             : 'bg-white text-foreground border-border hover:border-primary hover:text-primary')"
+                  [attr.aria-pressed]="activeCategory() === cat">
+            {{ cat }}
+          </button>
+        }
+      </div>
+
+      <!-- Tri -->
+      <select class="shrink-0 px-3 py-1.5 text-sm border-2 border-border rounded-lg bg-white
+                     text-foreground focus:outline-none focus:ring-2 focus:ring-primary
+                     cursor-pointer"
+              (change)="setSort($event)"
+              aria-label="Trier les produits">
+        <option value="name">Nom A–Z</option>
+        <option value="price-asc">Prix croissant</option>
+        <option value="price-desc">Prix décroissant</option>
+      </select>
+
+    </div>
+  </div>
+
+  <!-- Grille produits -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    @if (filteredProducts().length > 0) {
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        @for (product of filteredProducts(); track product.id) {
+          <ui-product-card [product]="product" (addToCart)="addToCart($event)" />
+        }
+      </div>
+    } @else {
+      <div class="flex flex-col items-center justify-center py-24 text-center">
+        <span class="text-6xl mb-4" aria-hidden="true">🔍</span>
+        <p class="text-xl font-bold text-foreground">Aucun produit trouvé</p>
+        <p class="text-muted text-sm mt-1">Essayez une autre catégorie</p>
+        <button type="button"
+                (click)="setCategory('Tous')"
+                class="mt-4 px-5 py-2 rounded-full bg-primary text-white text-sm font-medium
+                       hover:bg-primary-hover transition-colors">
+          Voir tout le catalogue
+        </button>
+      </div>
+    }
+
+  </div>
+
+</div>

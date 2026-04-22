@@ -1,0 +1,47 @@
+<section class="py-8 border-b border-border" aria-label="Catégories de produits">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-lg font-bold text-foreground">
+        Parcourir par catégorie
+      </h2>
+      <a routerLink="/catalogue"
+         class="text-sm font-medium text-primary flex items-center gap-1
+                hover:gap-2 transition-all
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">
+        Tout voir
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Pills horizontales -->
+    <div class="flex gap-2.5 overflow-x-auto pb-1
+                [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+         role="list"
+         aria-label="Filtrer par catégorie">
+
+      @for (cat of categories; track cat.id) {
+        <a [routerLink]="cat.route"
+           role="listitem"
+           (click)="select(cat.id)"
+           [class]="'shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-full border-2 ' +
+                    'text-sm font-medium transition-all cursor-pointer focus-visible:outline-none ' +
+                    'focus-visible:ring-2 focus-visible:ring-primary ' +
+                    (activeId() === cat.id
+                      ? 'bg-primary text-white border-primary shadow-md'
+                      : 'bg-white text-foreground border-border hover:border-primary hover:text-primary hover:shadow-sm')"
+           [attr.aria-pressed]="activeId() === cat.id">
+          <span aria-hidden="true">{{ cat.icon }}</span>
+          <span>{{ cat.name }}</span>
+        </a>
+      }
+
+    </div>
+
+  </div>
+</section>

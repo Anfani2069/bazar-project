@@ -1,0 +1,190 @@
+<section class="relative bg-primary overflow-hidden flex flex-col"
+         aria-label="Section d'introduction">
+
+  <!-- Fond dégradé subtil -->
+  <div class="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary-hover opacity-90 pointer-events-none"
+       aria-hidden="true"></div>
+
+  <div class="relative z-10 w-full max-w-7xl mx-auto px-8 py-14 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+
+    <!-- ── Colonne gauche : Texte ── -->
+    <div class="flex flex-col gap-6">
+
+      <!-- Badge pill -->
+      <span class="inline-flex items-center gap-2 self-start px-4 py-1.5 rounded-full
+                   border border-accent/60 text-accent text-sm font-medium">
+        🇰🇲 Livraison directe aux Comores
+      </span>
+
+      <!-- Headline -->
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight">
+        Tous vos<br />
+        <span class="text-accent">Produits</span><br />
+        Comoriens.
+      </h1>
+
+      <!-- Description -->
+      <p class="text-white/70 text-base sm:text-lg max-w-md leading-relaxed">
+        Commandez depuis la France les produits alimentaires locaux que vos proches
+        adorent aux Comores — livrés directement chez eux.
+      </p>
+
+      <!-- CTAs -->
+      <div class="flex flex-wrap items-center gap-5">
+
+        <!-- Primaire : pill sombre + cercle accent avec flèche (style Ecoland) -->
+        <a routerLink="/catalogue"
+           class="inline-flex items-center gap-3 pl-5 pr-1.5 py-1.5 rounded-full
+                  bg-white/10 border border-white/20 text-white text-sm font-semibold
+                  hover:bg-white/20 transition-colors
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+           aria-label="Commander maintenant">
+          Commander maintenant
+          <span class="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0"
+                aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                 fill="none" stroke="#0B3D34" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </span>
+        </a>
+
+        <!-- Secondaire : cercle play + texte (style Ecoland) -->
+        <a routerLink="/comment-ca-marche"
+           class="inline-flex items-center gap-3 text-white text-sm font-semibold
+                  hover:text-accent transition-colors
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-full"
+           aria-label="Comment ça marche">
+          <span class="w-10 h-10 rounded-full bg-white/20 border border-white/30
+                       flex items-center justify-center shrink-0 hover:bg-white/30 transition-colors"
+                aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                 fill="white" stroke="none">
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
+          </span>
+          Comment ça marche
+        </a>
+
+      </div>
+
+      <!-- Stats clients -->
+      <div class="flex items-center gap-4">
+        <!-- Avatars empilés -->
+        <div class="flex -space-x-3" aria-hidden="true">
+          <div class="w-9 h-9 rounded-full bg-accent/80 border-2 border-primary flex items-center justify-center text-primary text-xs font-bold">A</div>
+          <div class="w-9 h-9 rounded-full bg-green-400/80 border-2 border-primary flex items-center justify-center text-primary text-xs font-bold">M</div>
+          <div class="w-9 h-9 rounded-full bg-blue-400/80 border-2 border-primary flex items-center justify-center text-primary text-xs font-bold">F</div>
+          <div class="w-9 h-9 rounded-full bg-white/20 border-2 border-primary flex items-center justify-center text-white text-xs font-bold">+</div>
+        </div>
+        <div>
+          <p class="text-white font-bold text-sm">⭐ 4.8 / 5</p>
+          <p class="text-white/60 text-xs">Approuvé par +1 000 familles</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Colonne droite : Photo produits ── -->
+    <div class="hidden lg:block relative py-4" aria-hidden="true">
+
+      <!-- Image principale avec légère rotation -->
+      <div class="hero-photo-card relative rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/20 cursor-pointer">
+        <!-- Slideshow crossfade -->
+        <div class="relative w-full h-[420px]">
+          <img src="/img/image%201.jpg"
+               alt="Panier de légumes frais"
+               class="hero-slide-1 hero-photo-img absolute inset-0 w-full h-full object-cover object-center"
+               loading="eager" />
+          <img src="/img/image%202%20.jpg"
+               alt="Corbeille de produits comoriens"
+               class="hero-slide-2 hero-photo-img absolute inset-0 w-full h-full object-cover object-center"
+               loading="lazy" />
+        </div>
+        <!-- Dégradé bas pour le badge -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+
+        <!-- Badge bas collé à l'image -->
+        <div class="absolute bottom-4 left-4 right-4
+                    bg-white/95 rounded-2xl px-4 py-3
+                    flex items-center gap-3 shadow-xl">
+          <span class="text-2xl shrink-0">🏪</span>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-black text-primary leading-tight">Produits 100% locaux</p>
+            <p class="text-xs text-muted truncate">Préparés par nos magasins partenaires aux Comores</p>
+          </div>
+          <span class="shrink-0 text-xs font-bold text-primary bg-accent px-2.5 py-1 rounded-full">
+            Frais
+          </span>
+        </div>
+      </div>
+
+      <!-- Badge accent flottant en haut à droite -->
+      <div class="hero-badge-accent absolute -top-2 -right-2 z-10 bg-accent rounded-2xl px-4 py-2.5 shadow-xl
+                  flex items-center gap-2 cursor-default">
+        <span class="text-lg">🇰🇲</span>
+        <div>
+          <p class="text-xs font-black text-primary leading-none">Frais & Local</p>
+          <p class="text-[10px] font-medium text-primary/60">Comores</p>
+        </div>
+      </div>
+
+      <!-- Petit badge stats en bas à gauche -->
+      <div class="hero-badge-stats absolute -bottom-2 -left-2 z-10 bg-white rounded-xl px-3 py-2 shadow-xl
+                  flex items-center gap-2 cursor-default">
+        <span class="text-base">⭐</span>
+        <div>
+          <p class="text-xs font-black text-primary leading-none">4.8 / 5</p>
+          <p class="text-[10px] text-muted">+1 000 familles</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Barre de stats ── -->
+  <div class="relative z-10 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-8 py-5
+                grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-0 sm:divide-x sm:divide-white/10">
+
+      <div class="flex items-center gap-3">
+        <span class="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center shrink-0
+                     text-xl" aria-hidden="true">📦</span>
+        <div>
+          <p class="text-white font-extrabold text-xl leading-none">50+</p>
+          <p class="text-white/55 text-xs mt-0.5">Produits locaux</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 sm:pl-6">
+        <span class="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center shrink-0
+                     text-xl" aria-hidden="true">🏪</span>
+        <div>
+          <p class="text-white font-extrabold text-xl leading-none">3 îles</p>
+          <p class="text-white/55 text-xs mt-0.5">Magasins partenaires</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 sm:pl-6">
+        <span class="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center shrink-0
+                     text-xl" aria-hidden="true">⭐</span>
+        <div>
+          <p class="text-white font-extrabold text-xl leading-none">4.8/5</p>
+          <p class="text-white/55 text-xs mt-0.5">Note moyenne</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 sm:pl-6">
+        <span class="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center shrink-0
+                     text-xl" aria-hidden="true">🔒</span>
+        <div>
+          <p class="text-white font-extrabold text-xl leading-none">100%</p>
+          <p class="text-white/55 text-xs mt-0.5">Paiement sécurisé</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>

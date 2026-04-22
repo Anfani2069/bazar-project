@@ -1,0 +1,54 @@
+<section class="py-16 bg-white border-t border-border" aria-label="Témoignages clients">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Header -->
+    <div class="text-center mb-10">
+      <p class="text-xs font-bold text-accent uppercase tracking-widest mb-2">Ils nous font confiance</p>
+      <h2 class="text-2xl sm:text-3xl font-black text-foreground">
+        Ce que disent nos <span class="text-primary">clients</span>
+      </h2>
+    </div>
+
+    <!-- Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      @for (item of items; track item.name) {
+        <div class="card-lift bg-surface-alt rounded-2xl p-6 flex flex-col gap-4">
+
+          <!-- Étoiles -->
+          <div class="flex gap-1" [attr.aria-label]="item.stars + ' étoiles sur 5'">
+            @for (star of stars(item.stars); track $index) {
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                   fill="#EAB308" stroke="#EAB308" stroke-width="1"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            }
+          </div>
+
+          <!-- Texte -->
+          <p class="text-sm text-foreground leading-relaxed flex-1">
+            "{{ item.text }}"
+          </p>
+
+          <!-- Auteur -->
+          <div class="flex items-center gap-3 pt-2 border-t border-border">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center
+                        text-white font-bold text-sm shrink-0"
+                 [style.background-color]="item.avatarColor"
+                 aria-hidden="true">
+              {{ item.initial }}
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-foreground">{{ item.name }}</p>
+              <p class="text-xs text-muted">{{ item.location }}</p>
+            </div>
+          </div>
+
+        </div>
+      }
+
+    </div>
+
+  </div>
+</section>

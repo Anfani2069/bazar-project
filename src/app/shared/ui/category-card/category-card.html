@@ -1,0 +1,22 @@
+<button
+  type="button"
+  (click)="onSelect()"
+  [class]="buttonClasses()"
+  [attr.aria-label]="'Catégorie ' + category().name"
+  [attr.aria-pressed]="selected()"
+>
+  <div class="w-16 h-16 rounded-xl bg-surface-alt flex items-center justify-center overflow-hidden
+              group-hover:bg-primary-muted transition-colors">
+    @if (category().imageUrl) {
+      <img
+        [src]="category().imageUrl"
+        [alt]="category().name"
+        class="w-12 h-12 object-contain"
+      />
+    } @else {
+      <span class="text-3xl" aria-hidden="true">{{ category().icon }}</span>
+    }
+  </div>
+
+  <span [class]="labelClasses()">{{ category().name }}</span>
+</button>

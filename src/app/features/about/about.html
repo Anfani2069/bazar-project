@@ -1,0 +1,118 @@
+<div class="min-h-screen">
+
+  <!-- Hero -->
+  <div class="bg-primary py-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <p class="text-xs font-bold text-accent uppercase tracking-widest mb-3">Notre histoire</p>
+      <h1 class="text-3xl sm:text-4xl font-black text-white mb-4">
+        Nés de la diaspora, <br class="hidden sm:block"/>
+        construits pour la famille
+      </h1>
+      <p class="text-white/65 text-base leading-relaxed">
+        Bazar Comores est né d'un constat simple : la diaspora comorienne en France
+        souhaitait offrir à ses proches les produits locaux qu'ils aiment.
+        Grâce à nos magasins partenaires aux Comores, c'est désormais possible en quelques clics.
+      </p>
+    </div>
+  </div>
+
+  <!-- Mission -->
+  <div class="bg-surface-alt py-16">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+        <!-- Texte -->
+        <div>
+          <p class="text-xs font-bold text-accent uppercase tracking-widest mb-3">Notre mission</p>
+          <h2 class="text-2xl font-black text-foreground mb-4">
+            Rapprocher les familles à travers les produits qu'elles aiment
+          </h2>
+          <p class="text-muted text-sm leading-relaxed mb-4">
+            Que vous soyez à Paris, Lyon ou Marseille, vous commandez en ligne et
+            nos magasins partenaires aux Comores préparent et livrent directement
+            à votre famille — mangues, épices, riz, miel, poissons séchés…
+          </p>
+          <p class="text-muted text-sm leading-relaxed">
+            Pas d'expédition depuis la France : tout est acheté et préparé localement
+            par nos partenaires de confiance en Grande Comore, Anjouan et Mohéli.
+          </p>
+        </div>
+
+        <!-- Illustration chiffres -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-white rounded-2xl p-6 text-center shadow-sm border border-border">
+            <p class="text-4xl font-black text-primary">1 000+</p>
+            <p class="text-xs font-semibold text-muted mt-1 uppercase tracking-wider">Familles satisfaites</p>
+          </div>
+          <div class="bg-primary rounded-2xl p-6 text-center shadow-sm">
+            <p class="text-4xl font-black text-accent">50+</p>
+            <p class="text-xs font-semibold text-white/60 mt-1 uppercase tracking-wider">Produits locaux</p>
+          </div>
+          <div class="bg-white rounded-2xl p-6 text-center shadow-sm border border-border">
+            <p class="text-4xl font-black text-primary">3–5j</p>
+            <p class="text-xs font-semibold text-muted mt-1 uppercase tracking-wider">Délai livraison</p>
+          </div>
+          <div class="bg-white rounded-2xl p-6 text-center shadow-sm border border-border">
+            <p class="text-4xl font-black text-primary">4.8⭐</p>
+            <p class="text-xs font-semibold text-muted mt-1 uppercase tracking-wider">Note moyenne</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Valeurs -->
+  <div class="bg-white py-16 border-t border-border">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="text-center mb-10">
+        <p class="text-xs font-bold text-accent uppercase tracking-widest mb-2">Ce qui nous guide</p>
+        <h2 class="text-2xl font-black text-foreground">Nos valeurs</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        @for (value of values; track value.title) {
+          <div class="flex flex-col gap-4 p-6 bg-surface-alt rounded-2xl border border-border
+                      hover:shadow-md transition-shadow">
+            <span class="text-4xl" aria-hidden="true">{{ value.icon }}</span>
+            <h3 class="text-base font-bold text-foreground">{{ value.title }}</h3>
+            <p class="text-sm text-muted leading-relaxed">{{ value.description }}</p>
+          </div>
+        }
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="bg-primary py-14 text-center">
+    <h2 class="text-2xl font-black text-white mb-6">
+      Rejoignez la communauté 🇰🇲
+    </h2>
+    <div class="flex items-center justify-center gap-4 flex-wrap">
+      <a routerLink="/catalogue"
+         class="inline-flex items-center gap-3 pl-5 pr-1.5 py-1.5 rounded-full
+                bg-accent text-primary font-semibold text-sm
+                hover:bg-accent-hover transition-colors
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
+        Découvrir le catalogue
+        <span class="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </span>
+      </a>
+      <a routerLink="/connexion"
+         class="px-6 py-3 rounded-full border border-white/30 text-white text-sm font-semibold
+                hover:bg-white/10 transition-colors
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
+        Créer un compte
+      </a>
+    </div>
+  </div>
+
+</div>
