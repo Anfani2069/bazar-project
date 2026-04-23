@@ -1,8 +1,10 @@
 <article class="card-lift group bg-white rounded-2xl overflow-hidden shadow-sm cursor-pointer">
 
   <!-- Zone illustration -->
-  <div class="relative flex items-center justify-center h-44 overflow-hidden"
-       [style]="imageBg()">
+  <a [routerLink]="['/catalogue', product().id]"
+     class="relative flex items-center justify-center h-44 overflow-hidden block"
+     [style]="imageBg()"
+     [attr.aria-label]="'Voir ' + product().name">
 
     @if (product().badge) {
       <div class="absolute top-3 left-3 z-10">
@@ -13,15 +15,15 @@
     @if (product().imageUrl) {
       <img [src]="product().imageUrl"
            [alt]="product().name"
-           class="h-32 w-32 object-contain mix-blend-multiply
-                  transition-transform duration-500 group-hover:scale-110" />
+           class="absolute inset-0 w-full h-full object-contain p-3
+                  transition-transform duration-300 group-hover:scale-105" />
     } @else {
-      <span class="text-7xl select-none transition-transform duration-300 group-hover:scale-110 drop-shadow-sm"
+      <span class="text-7xl select-none transition-transform duration-300 group-hover:scale-105"
             aria-hidden="true">
         {{ product().emoji ?? '🛒' }}
       </span>
     }
-  </div>
+  </a>
 
   <!-- Infos produit -->
   <div class="p-4 flex flex-col gap-1 border-t border-border/50">
@@ -32,9 +34,11 @@
       </p>
     }
 
-    <h3 class="text-sm font-semibold text-foreground line-clamp-2 leading-snug min-h-[2.5rem]">
+    <a [routerLink]="['/catalogue', product().id]"
+       class="text-sm font-semibold text-foreground line-clamp-2 leading-snug min-h-[2.5rem]
+              hover:text-primary transition-colors block">
       {{ product().name }}
-    </h3>
+    </a>
 
     <div class="flex items-end justify-between mt-2">
       <div>

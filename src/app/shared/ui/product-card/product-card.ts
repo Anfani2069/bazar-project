@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 import { Badge } from '../badge/badge';
 import { Product } from '../../models';
@@ -13,20 +14,23 @@ const CATEGORY_COLORS: Record<string, string> = {
   'Naturels': '#fffbeb',
   'Huiles':   '#f7fee7',
   'Boissons': '#f0fdfa',
+  'Ménager':  '#f1f5f9',
 };
 
 @Component({
   selector: 'ui-product-card',
   templateUrl: './product-card.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Badge, CurrencyPipe],
+  imports: [Badge, CurrencyPipe, RouterLink],
 })
 export class ProductCard {
   readonly product   = input.required<Product>();
   readonly addToCart = output<Product>();
 
   protected readonly imageBg = computed((): Record<string, string> => ({
-    'background-color': CATEGORY_COLORS[this.product().category ?? ''] ?? '#f8fafa',
+    'background-color': this.product().imageUrl
+      ? '#ffffff'
+      : (CATEGORY_COLORS[this.product().category ?? ''] ?? '#f8fafa'),
   }));
 
   protected readonly badgeVariant = computed(() => {

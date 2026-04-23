@@ -1,7 +1,17 @@
-<app-header />
+@if (!isAdmin()) {
+  <app-header />
+}
 
-<main class="min-h-screen bg-surface-alt">
+@if (isAdmin()) {
   <router-outlet />
-</main>
+} @else {
+  <main class="min-h-screen bg-surface-alt">
+    <router-outlet />
+  </main>
+}
 
-<app-footer />
+@if (!isAdmin()) {
+  <app-footer />
+}
+
+<ui-toast />

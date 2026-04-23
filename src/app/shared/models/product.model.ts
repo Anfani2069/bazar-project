@@ -8,4 +8,5 @@ export interface Product {
   badge?: 'best-seller' | 'new' | 'promo';
   originalPrice?: number;
   unit?: string;
+  description?: string;
 }

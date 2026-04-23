@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, ElementRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, viewChild } from '@angular/core';
 
 import { ProductCard } from '@shared/ui/product-card/product-card';
 import type { Product } from '@shared/models';
+import { CartService } from '@features/cart/cart.service';
 
 const BEST_SELLERS: Product[] = [
   { id: 'bs1', name: 'Jus de coco naturel',        price: 4.50,  emoji: '🥥', category: 'Boissons',  unit: '500ml', badge: 'best-seller' },
@@ -19,6 +20,7 @@ const BEST_SELLERS: Product[] = [
   imports: [ProductCard],
 })
 export class BestSellers {
+  private  readonly cartService = inject(CartService);
   protected readonly scrollRef = viewChild<ElementRef<HTMLDivElement>>('scrollRef');
   protected readonly products  = BEST_SELLERS;
 
@@ -29,6 +31,6 @@ export class BestSellers {
   }
 
   protected addToCart(product: Product): void {
-    console.log('Add to cart:', product.name);
+    this.cartService.addToCart(product);
   }
 }

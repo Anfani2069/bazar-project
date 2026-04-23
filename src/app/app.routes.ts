@@ -26,6 +26,18 @@ export const routes: Routes = [
     loadChildren: () => import('./features/about/about.routes').then(m => m.ABOUT_ROUTES),
   },
   {
+    path: 'commande',
+    loadChildren: () => import('./features/checkout/checkout.routes').then(m => m.CHECKOUT_ROUTES),
+  },
+  {
+    path: 'admin',
+    loadChildren: () => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES),
+  },
+  {
+    path: 'suivi',
+    loadComponent: () => import('./features/order-tracking/order-tracking').then(m => m.OrderTracking),
+  },
+  {
     path: '**',
     redirectTo: '',
   },

@@ -1,0 +1,212 @@
+<div class="flex flex-col gap-6">
+
+  <!-- Header -->
+  <div class="flex items-start justify-between">
+    <div>
+      <h1 class="text-2xl font-black text-foreground">Rapports & Ventes</h1>
+      <p class="text-sm text-muted mt-1">Analysez votre activité commerciale sur une période donnée.</p>
+    </div>
+    <button type="button" (click)="printReport()"
+            class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold
+                   hover:bg-primary-hover active:scale-[0.98] transition-all shrink-0">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 6 2 18 2 18 9"/>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+        <rect x="6" y="14" width="12" height="8"/>
+      </svg>
+      Imprimer le rapport
+    </button>
+  </div>
+
+  <!-- Sélecteur de période -->
+  <div class="bg-white rounded-2xl shadow-sm p-5 flex flex-wrap items-center gap-4">
+    <span class="text-xs font-bold text-muted uppercase tracking-wide shrink-0">📅 Période</span>
+
+    <!-- Presets -->
+    <div class="flex flex-wrap gap-1.5">
+      @for (p of presets; track p.key) {
+        <button type="button" (click)="setPreset(p.key)"
+                class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
+                [class]="activePreset() === p.key
+                  ? 'bg-primary text-white shadow-sm'
+                  : 'bg-surface-alt text-muted hover:text-foreground hover:bg-border'">
+          {{ p.label }}
+        </button>
+      }
+    </div>
+
+    <span class="hidden sm:block text-border">|</span>
+
+    <!-- Saisie manuelle -->
+    <div class="flex items-center gap-2 flex-wrap">
+      <div class="flex items-center gap-1.5">
+        <label class="text-xs text-muted shrink-0">Du</label>
+        <input type="date" [value]="dateFrom()"
+               (change)="setDateFrom($any($event.target).value)"
+               class="text-xs text-foreground bg-surface-alt border border-border rounded-lg px-2 py-1
+                      focus:outline-none focus:border-primary transition-colors cursor-pointer" />
+      </div>
+      <div class="flex items-center gap-1.5">
+        <label class="text-xs text-muted shrink-0">Au</label>
+        <input type="date" [value]="dateTo()"
+               (change)="setDateTo($any($event.target).value)"
+               class="text-xs text-foreground bg-surface-alt border border-border rounded-lg px-2 py-1
+                      focus:outline-none focus:border-primary transition-colors cursor-pointer" />
+      </div>
+    </div>
+
+    <span class="ml-auto text-xs text-muted font-medium">
+      {{ periodOrders().length }} commande(s) sur la période
+    </span>
+  </div>
+
+  <!-- KPI cards -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-white rounded-2xl p-5 shadow-sm flex flex-col gap-3">
+      <span class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center text-xl">💶</span>
+      <div>
+        <p class="text-2xl font-black text-foreground">{{ kpis().revenue | currency:'EUR':'symbol':'1.2-2' }}</p>
+        <p class="text-xs text-muted mt-0.5">Chiffre d'affaires</p>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm flex flex-col gap-3">
+      <span class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-xl">📦</span>
+      <div>
+        <p class="text-2xl font-black text-foreground">{{ kpis().count }}</p>
+        <p class="text-xs text-muted mt-0.5">Commandes reçues</p>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm flex flex-col gap-3">
+      <span class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-xl">🧾</span>
+      <div>
+        <p class="text-2xl font-black text-foreground">{{ kpis().avgOrder | currency:'EUR':'symbol':'1.2-2' }}</p>
+        <p class="text-xs text-muted mt-0.5">Panier moyen</p>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm flex flex-col gap-3">
+      <span class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-xl">✅</span>
+      <div>
+        <p class="text-2xl font-black text-foreground">{{ kpis().delivered }}</p>
+        <p class="text-xs text-muted mt-0.5">Commandes livrées</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Produits vendus -->
+    <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-border">
+        <h2 class="text-base font-black text-foreground">Produits vendus</h2>
+        <p class="text-xs text-muted mt-0.5">Classés par chiffre d'affaires</p>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-surface-alt border-b border-border">
+              <th class="px-5 py-3 text-left text-xs font-bold text-muted uppercase tracking-wide w-8">#</th>
+              <th class="px-5 py-3 text-left text-xs font-bold text-muted uppercase tracking-wide">Produit</th>
+              <th class="px-5 py-3 text-center text-xs font-bold text-muted uppercase tracking-wide">Qté</th>
+              <th class="px-5 py-3 text-right text-xs font-bold text-muted uppercase tracking-wide">CA</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of productSales(); track p.name; let i = $index) {
+              <tr class="border-b border-border last:border-0 hover:bg-surface-alt/40 transition-colors">
+                <td class="px-5 py-3 text-xs text-muted font-bold">{{ i + 1 }}</td>
+                <td class="px-5 py-3">
+                  <div class="flex items-center gap-2.5">
+                    @if (p.imageUrl) {
+                      <img [src]="p.imageUrl" [alt]="p.name"
+                           class="w-8 h-8 object-contain rounded-lg bg-surface-alt shrink-0" />
+                    } @else {
+                      <span class="w-8 h-8 flex items-center justify-center text-lg bg-surface-alt rounded-lg shrink-0">
+                        {{ p.emoji ?? '🛒' }}
+                      </span>
+                    }
+                    <span class="text-sm font-medium text-foreground truncate">{{ p.name }}</span>
+                  </div>
+                </td>
+                <td class="px-5 py-3 text-center font-bold text-foreground">{{ p.qty }}</td>
+                <td class="px-5 py-3 text-right font-bold text-primary">
+                  {{ p.revenue | currency:'EUR':'symbol':'1.2-2' }}
+                </td>
+              </tr>
+            }
+            @empty {
+              <tr><td colspan="4" class="px-5 py-10 text-center text-muted text-sm">Aucune vente sur cette période.</td></tr>
+            }
+          </tbody>
+          @if (productSales().length > 0) {
+            <tfoot>
+              <tr class="bg-green-50 border-t-2 border-primary">
+                <td colspan="2" class="px-5 py-3 text-sm font-black text-foreground">Total</td>
+                <td class="px-5 py-3 text-center font-black text-foreground">
+                  {{ productSales().length }} réf.
+                </td>
+                <td class="px-5 py-3 text-right font-black text-primary text-base">
+                  {{ kpis().revenue | currency:'EUR':'symbol':'1.2-2' }}
+                </td>
+              </tr>
+            </tfoot>
+          }
+        </table>
+      </div>
+    </div>
+
+    <!-- Colonne droite : livraison + paiement -->
+    <div class="flex flex-col gap-4">
+
+      <!-- Par mode de livraison -->
+      <div class="bg-white rounded-2xl shadow-sm p-5">
+        <h3 class="text-sm font-black text-foreground mb-4">🚚 Par mode de livraison</h3>
+        <div class="flex flex-col gap-3">
+          @for (d of deliverySales(); track d.label) {
+            <div class="flex items-center gap-3">
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-semibold text-foreground truncate">{{ d.label }}</p>
+                <p class="text-[10px] text-muted">{{ d.count }} commande(s)</p>
+              </div>
+              <span class="text-xs font-bold text-primary shrink-0">
+                {{ d.revenue | currency:'EUR':'symbol':'1.2-2' }}
+              </span>
+            </div>
+          }
+          @empty {
+            <p class="text-xs text-muted">Aucune donnée.</p>
+          }
+        </div>
+      </div>
+
+      <!-- Par mode de paiement -->
+      <div class="bg-white rounded-2xl shadow-sm p-5">
+        <h3 class="text-sm font-black text-foreground mb-4">💳 Par mode de paiement</h3>
+        <div class="flex flex-col gap-3">
+          @for (p of paymentSales(); track p.label) {
+            <div class="flex items-center gap-3">
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-semibold text-foreground">{{ p.label }}</p>
+                <p class="text-[10px] text-muted">{{ p.count }} commande(s)</p>
+              </div>
+              <span class="text-xs font-bold text-primary shrink-0">
+                {{ p.revenue | currency:'EUR':'symbol':'1.2-2' }}
+              </span>
+            </div>
+            <!-- Barre de progression -->
+            <div class="w-full h-1.5 bg-surface-alt rounded-full overflow-hidden -mt-2">
+              <div class="h-full bg-primary rounded-full transition-all"
+                   [style.width.%]="kpis().revenue > 0 ? (p.revenue / kpis().revenue * 100) : 0">
+              </div>
+            </div>
+          }
+          @empty {
+            <p class="text-xs text-muted">Aucune donnée.</p>
+          }
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

@@ -20,10 +20,15 @@
           @for (item of items(); track item.product.id) {
             <div class="bg-white rounded-2xl p-4 flex items-center gap-4 shadow-sm">
 
-              <!-- Emoji produit -->
-              <div class="w-16 h-16 rounded-xl flex items-center justify-center text-3xl shrink-0
-                          bg-surface-alt">
-                {{ item.product.emoji ?? '🛒' }}
+              <!-- Image / Emoji produit -->
+              <div class="w-16 h-16 rounded-xl shrink-0 bg-surface-alt overflow-hidden
+                          flex items-center justify-center">
+                @if (item.product.imageUrl) {
+                  <img [src]="item.product.imageUrl" [alt]="item.product.name"
+                       class="w-full h-full object-contain" />
+                } @else {
+                  <span class="text-3xl">{{ item.product.emoji ?? '🛒' }}</span>
+                }
               </div>
 
               <!-- Infos -->
@@ -138,12 +143,13 @@
             </div>
           </div>
 
-          <button type="button"
-                  class="w-full mt-5 py-3 rounded-xl bg-primary text-white font-semibold text-sm
-                         hover:bg-primary-hover active:scale-[0.98] transition-all
-                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+          <a routerLink="/commande"
+             class="w-full mt-5 py-3 rounded-xl bg-primary text-white font-semibold text-sm
+                    hover:bg-primary-hover active:scale-[0.98] transition-all
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
+                    flex items-center justify-center gap-2">
             Passer la commande →
-          </button>
+          </a>
 
           <!-- Sécurité -->
           <div class="flex items-center justify-center gap-2 mt-3 text-muted">

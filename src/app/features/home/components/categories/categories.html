@@ -26,7 +26,7 @@
          aria-label="Filtrer par catégorie">
 
       @for (cat of categories; track cat.id) {
-        <a [routerLink]="cat.route"
+        <a [routerLink]="cat.route" [queryParams]="{ categorie: cat.param }"
            role="listitem"
            (click)="select(cat.id)"
            [class]="'shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-full border-2 ' +

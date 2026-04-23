@@ -1,0 +1,132 @@
+<div class="min-h-screen flex bg-[#f4f6f9]">
+
+  <!-- ── Sidebar ── -->
+  <aside class="w-64 shrink-0 bg-primary flex flex-col min-h-screen shadow-xl"
+         [class.hidden]="!sidebarOpen()">
+
+    <!-- Brand -->
+    <div class="px-6 py-6 border-b border-white/10">
+      <div class="flex items-center gap-3">
+        <span class="w-9 h-9 rounded-xl bg-accent flex items-center justify-center text-lg shrink-0">🛒</span>
+        <div>
+          <p class="text-white font-black text-sm leading-none">Bazar Comores</p>
+          <p class="text-white/50 text-[10px] tracking-wider uppercase mt-0.5">Admin Panel</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 px-3 py-4 flex flex-col gap-1">
+
+      <p class="px-3 text-[10px] font-bold text-white/30 uppercase tracking-widest mb-2">Menu</p>
+
+      <a routerLink="/admin/dashboard" routerLinkActive="bg-white/15 text-white"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 text-sm font-medium
+                hover:bg-white/10 hover:text-white transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+        </svg>
+        Dashboard
+      </a>
+
+      <a routerLink="/admin/commandes" routerLinkActive="bg-white/15 text-white"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 text-sm font-medium
+                hover:bg-white/10 hover:text-white transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+        Commandes
+        @if (orderService.stats().pending > 0) {
+          <span class="ml-auto bg-accent text-primary text-[10px] font-black px-2 py-0.5 rounded-full">
+            {{ orderService.stats().pending }}
+          </span>
+        }
+      </a>
+
+      <a routerLink="/admin/rapports" routerLinkActive="bg-white/15 text-white"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 text-sm font-medium
+                hover:bg-white/10 hover:text-white transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+        Rapports & Ventes
+      </a>
+
+      <a routerLink="/catalogue" target="_blank"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/70 text-sm font-medium
+                hover:bg-white/10 hover:text-white transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        Voir le site
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" class="ml-auto opacity-40">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+          <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+      </a>
+
+    </nav>
+
+    <!-- Bottom: logout -->
+    <div class="px-3 py-4 border-t border-white/10">
+      <div class="flex items-center gap-3 px-3 py-2 mb-2">
+        <div class="w-7 h-7 rounded-full bg-accent flex items-center justify-center text-primary text-xs font-black shrink-0">A</div>
+        <div class="min-w-0">
+          <p class="text-white text-xs font-semibold truncate">admin&#64;bazarcomores.com</p>
+          <p class="text-white/40 text-[10px]">Administrateur</p>
+        </div>
+      </div>
+      <button type="button" (click)="logout()"
+              class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/50 text-sm
+                     hover:bg-red-500/20 hover:text-red-300 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Déconnexion
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- ── Main content ── -->
+  <div class="flex-1 flex flex-col min-w-0">
+
+    <!-- Topbar -->
+    <header class="bg-white border-b border-border px-6 py-4 flex items-center gap-4 shrink-0">
+      <button type="button" (click)="toggleSidebar()"
+              class="text-muted hover:text-foreground transition-colors p-1 rounded-lg hover:bg-surface-alt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <span class="text-sm font-semibold text-foreground">Tableau de bord</span>
+      <div class="ml-auto flex items-center gap-2">
+        @if (orderService.stats().pending > 0) {
+          <span class="flex items-center gap-1.5 text-xs font-semibold text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+            {{ orderService.stats().pending }} commande(s) en attente
+          </span>
+        }
+      </div>
+    </header>
+
+    <!-- Router outlet -->
+    <main class="flex-1 overflow-auto p-6">
+      <router-outlet />
+    </main>
+
+  </div>
+
+</div>

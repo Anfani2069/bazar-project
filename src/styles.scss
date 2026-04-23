@@ -12,25 +12,45 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
-/* ── Hero slideshow crossfade ── */
+/* ── Hero slideshow crossfade (4 images, 16s cycle) ── */
 @keyframes hero-crossfade-1 {
-  0%, 45%  { opacity: 1; }
-  55%, 95% { opacity: 0; }
+  0%, 25%  { opacity: 1; }
+  31%, 94% { opacity: 0; }
   100%     { opacity: 1; }
 }
 
 @keyframes hero-crossfade-2 {
-  0%, 45%  { opacity: 0; }
-  55%, 95% { opacity: 1; }
+  0%, 25%  { opacity: 0; }
+  31%, 50% { opacity: 1; }
+  56%, 100% { opacity: 0; }
+}
+
+@keyframes hero-crossfade-3 {
+  0%, 50%  { opacity: 0; }
+  56%, 75% { opacity: 1; }
+  81%, 100% { opacity: 0; }
+}
+
+@keyframes hero-crossfade-4 {
+  0%, 75%  { opacity: 0; }
+  81%, 94% { opacity: 1; }
   100%     { opacity: 0; }
 }
 
 .hero-slide-1 {
-  animation: hero-crossfade-1 10s ease-in-out infinite;
+  animation: hero-crossfade-1 16s ease-in-out infinite;
 }
 
 .hero-slide-2 {
-  animation: hero-crossfade-2 10s ease-in-out infinite;
+  animation: hero-crossfade-2 16s ease-in-out infinite;
+}
+
+.hero-slide-3 {
+  animation: hero-crossfade-3 16s ease-in-out infinite;
+}
+
+.hero-slide-4 {
+  animation: hero-crossfade-4 16s ease-in-out infinite;
 }
 
 /* ── Hero photo card ── */
@@ -78,8 +98,8 @@ body {
               box-shadow 0.25s ease;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
   }
 }
 

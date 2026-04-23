@@ -1,0 +1,195 @@
+<div class="min-h-screen bg-surface-alt">
+
+  @if (product(); as p) {
+
+    <!-- Breadcrumb -->
+    <div class="bg-white border-b border-border">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <nav class="flex items-center gap-2 text-sm text-muted flex-wrap" aria-label="Fil d'Ariane">
+          <a routerLink="/" class="hover:text-primary transition-colors">Accueil</a>
+          <span aria-hidden="true">/</span>
+          <a routerLink="/catalogue" class="hover:text-primary transition-colors">Catalogue</a>
+          @if (p.category) {
+            <span aria-hidden="true">/</span>
+            <span class="text-muted">{{ p.category }}</span>
+          }
+          <span aria-hidden="true">/</span>
+          <span class="text-foreground font-medium truncate">{{ p.name }}</span>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <div class="grid lg:grid-cols-2 gap-8 lg:gap-14 items-start">
+
+        <!-- Left: Visual -->
+        <div class="relative flex items-center justify-center rounded-3xl min-h-[320px] lg:min-h-[420px]"
+             [style]="imageBg()">
+          @if (p.badge) {
+            <div class="absolute top-5 left-5 z-10">
+              <ui-badge [variant]="badgeVariant()">{{ badgeLabel() }}</ui-badge>
+            </div>
+          }
+          @if (p.imageUrl) {
+            <img [src]="p.imageUrl" [alt]="p.name"
+                 class="absolute inset-0 w-full h-full object-contain p-8" />
+          } @else {
+            <span class="text-[9rem] lg:text-[11rem] select-none" aria-hidden="true">
+              {{ p.emoji ?? '🛒' }}
+            </span>
+          }
+        </div>
+
+        <!-- Right: Info -->
+        <div class="flex flex-col gap-5">
+
+          <!-- Category + badge row -->
+          <div class="flex items-center gap-3 flex-wrap">
+            @if (p.category) {
+              <span class="text-xs font-bold text-muted uppercase tracking-widest">{{ p.category }}</span>
+            }
+            @if (p.badge) {
+              <ui-badge [variant]="badgeVariant()">{{ badgeLabel() }}</ui-badge>
+            }
+          </div>
+
+          <!-- Title -->
+          <h1 class="text-3xl lg:text-4xl font-black text-foreground leading-tight">{{ p.name }}</h1>
+
+          <!-- Price -->
+          <div class="flex items-baseline gap-3 flex-wrap">
+            <span class="text-4xl font-black text-primary">
+              {{ p.price | currency:'EUR':'symbol':'1.2-2' }}
+            </span>
+            @if (p.originalPrice) {
+              <span class="text-xl text-muted line-through">
+                {{ p.originalPrice | currency:'EUR':'symbol':'1.2-2' }}
+              </span>
+              <span class="text-sm font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
+                -{{ discount() }}%
+              </span>
+            }
+            @if (p.unit) {
+              <span class="text-sm text-muted">/ {{ p.unit }}</span>
+            }
+          </div>
+
+          <!-- Description -->
+          @if (p.description) {
+            <p class="text-muted text-sm leading-relaxed">{{ p.description }}</p>
+          }
+
+          <!-- Info pills -->
+          <div class="flex flex-wrap gap-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-border text-xs font-medium text-foreground">
+              🌍 Origine : Comores
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-border text-xs font-medium text-foreground">
+              🚚 Livraison sous 48h
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-border text-xs font-medium text-foreground">
+              ✅ Produit authentique
+            </span>
+          </div>
+
+          <hr class="border-border" />
+
+          <!-- Quantity selector -->
+          <div class="flex items-center gap-5">
+            <span class="text-sm font-semibold text-foreground">Quantité</span>
+            <div class="flex items-center rounded-xl border-2 border-border overflow-hidden bg-white">
+              <button type="button"
+                      (click)="decrement()"
+                      class="w-11 h-11 flex items-center justify-center text-lg font-bold
+                             text-foreground hover:bg-surface-alt transition-colors
+                             disabled:opacity-40 disabled:cursor-not-allowed"
+                      [disabled]="quantity() <= 1"
+                      aria-label="Diminuer la quantité">
+                −
+              </button>
+              <span class="w-11 h-11 flex items-center justify-center font-bold text-foreground text-base
+                           border-x border-border">
+                {{ quantity() }}
+              </span>
+              <button type="button"
+                      (click)="increment()"
+                      class="w-11 h-11 flex items-center justify-center text-lg font-bold
+                             text-foreground hover:bg-surface-alt transition-colors"
+                      aria-label="Augmenter la quantité">
+                +
+              </button>
+            </div>
+          </div>
+
+          <!-- Add to cart CTA -->
+          <button type="button"
+                  (click)="addToCart()"
+                  class="w-full py-4 rounded-2xl bg-primary text-white font-bold text-base
+                         hover:bg-primary-hover active:scale-[0.98] transition-all duration-200
+                         flex items-center justify-center gap-2.5 shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg>
+            Ajouter au panier
+            @if (quantity() > 1) {
+              · {{ quantity() }} article{{ quantity() > 1 ? 's' : '' }}
+            }
+          </button>
+
+          <!-- Back link -->
+          <button type="button"
+                  (click)="goBack()"
+                  class="self-start flex items-center gap-1.5 text-sm text-muted
+                         hover:text-primary transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg>
+            Retour au catalogue
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Related products -->
+      @if (relatedProducts().length > 0) {
+        <section class="mt-16">
+          <div class="flex items-center gap-3 mb-6">
+            <h2 class="text-xl font-black text-foreground">Vous aimerez aussi</h2>
+            <span class="text-xs font-bold text-muted uppercase tracking-widest">
+              · {{ relatedProducts()[0].category }}
+            </span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            @for (rp of relatedProducts(); track rp.id) {
+              <ui-product-card [product]="rp" (addToCart)="cartService.addToCart($event)" />
+            }
+          </div>
+        </section>
+      }
+
+    </div>
+
+  } @else {
+
+    <!-- Product not found -->
+    <div class="flex flex-col items-center justify-center py-32 text-center px-4">
+      <span class="text-6xl mb-4" aria-hidden="true">🔍</span>
+      <p class="text-2xl font-black text-foreground">Produit introuvable</p>
+      <p class="text-muted text-sm mt-2">Ce produit n'existe pas ou a été retiré du catalogue.</p>
+      <a routerLink="/catalogue"
+         class="mt-6 px-6 py-3 rounded-full bg-primary text-white font-semibold text-sm
+                hover:bg-primary-hover transition-colors">
+        Retour au catalogue
+      </a>
+    </div>
+
+  }
+
+</div>
