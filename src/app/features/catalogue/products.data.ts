@@ -73,6 +73,84 @@ export const ALL_PRODUCTS: Product[] = [
     description: 'Farine sans gluten extraite du manioc frais. Alternative naturelle à la farine de blé pour les personnes intolérantes. Utilisée pour préparer galettes, beignets et plats traditionnels.',
   },
   {
+    id: 'c3', name: 'Farine de blé — 25 kg', price: 18.00,
+    imageUrl: 'img/Farine-25kilo.png',
+    category: 'Céréales', unit: 'sac 25 kg',
+    description: 'Farine de blé tout usage en grand format 25 kg, idéale pour les boulangeries, restaurants et foyers. Parfaite pour les mkatra, galettes, pains et pâtisseries comoriennes.',
+  },
+  {
+    id: 'c4', name: 'Macaroni — Pâtes alimentaires', price: 1.80,
+    imageUrl: 'img/Macaroni-patte.png',
+    category: 'Céréales', unit: 'paquet 500g',
+    description: 'Pâtes macaroni de qualité supérieure, cuisson rapide. Incontournables de la cuisine du quotidien, idéaux en gratin, soupe ou sautés. Riches en glucides complexes.',
+  },
+  {
+    id: 'r1', name: 'Riz Basmati Malika — 1 kg', price: 2.80,
+    imageUrl: 'img/riz-basmati-malika-1kilo.png',
+    category: 'Céréales', unit: '1 kg', badge: 'new',
+    description: 'Riz basmati extra long grain de la marque Malika. Arôme délicat, grains fins et non collants à la cuisson. Format 1 kg pratique pour les petits foyers.',
+  },
+  {
+    id: 'r2', name: 'Riz Basmati Malika — 10 kg', price: 22.00,
+    imageUrl: 'img/basmati-malika-10kilo.png',
+    category: 'Céréales', unit: '10 kg',
+    description: 'Grand sac de riz basmati Malika 10 kg. Grains longs parfumés, idéals pour le riz pilaf, biriani et plats festifs. Qualité premium, rapport qualité-prix excellent.',
+  },
+  {
+    id: 'r3', name: 'Riz Basmati Malika — 20 kg', price: 38.00,
+    imageUrl: 'img/basmati-malika-20kilo.png',
+    category: 'Céréales', unit: '20 kg', badge: 'promo', originalPrice: 44.00,
+    description: 'Format familial 20 kg de riz basmati Malika. Idéal pour les familles nombreuses et les restaurateurs. Riz long grain premium, arôme de basmati authentique.',
+  },
+  {
+    id: 'r4', name: 'Riz Basmati Malika — 40 kg', price: 70.00,
+    imageUrl: 'img/basmati-malika-40kilo.png',
+    category: 'Céréales', unit: '40 kg',
+    description: 'Grand format professionnel 40 kg de riz basmati Malika. Réservé aux restaurants, épiceries et grands foyers. Livraison disponible sur toutes les îles des Comores.',
+  },
+  {
+    id: 'r5', name: 'Riz Basmati Sultan — 10 kg', price: 24.00,
+    imageUrl: 'img/riz-basmati-sultan-10kilo.png',
+    category: 'Céréales', unit: '10 kg', badge: 'best-seller',
+    description: 'Riz basmati Sultan 10 kg, référence des tables comoriennes. Grain extra long, parfum subtil, texture légère et aérée. La marque Sultan est gage de qualité depuis des années.',
+  },
+  {
+    id: 'r6', name: 'Riz Basmati Sultan — 20 kg', price: 42.00,
+    imageUrl: 'img/basmati-sultan-20kilo.png',
+    category: 'Céréales', unit: '20 kg',
+    description: 'Grand format 20 kg de riz basmati Sultan. Idéal pour les familles et les restaurants. Grain long parfumé, qualité constante et irréprochable.',
+  },
+  {
+    id: 'r7', name: 'Riz Basmati Sultan — 40 kg', price: 78.00,
+    imageUrl: 'img/basmati-sultan-40kilo.png',
+    category: 'Céréales', unit: '40 kg',
+    description: 'Format professionnel 40 kg de riz basmati Sultan. Pour les grands volumes : restaurants, traiteurs, épiceries. Livraison à domicile disponible sur toutes les îles.',
+  },
+  {
+    id: 'r8', name: 'Riz parfumé — 1 kg', price: 2.50,
+    imageUrl: 'img/riz-parfume-1kilo.png',
+    category: 'Céréales', unit: '1 kg', badge: 'new',
+    description: 'Riz parfumé grain long en format 1 kg. Arôme délicat, cuisson rapide et grains bien séparés. Idéal pour le quotidien, les plats mijotés et les sautés comoriens.',
+  },
+  {
+    id: 'n8', name: 'Lait Nura — Boîte', price: 3.50,
+    imageUrl: 'img/Lait nura.png',
+    category: 'Naturels', unit: 'boîte',
+    description: 'Lait de la marque Nura, riche en calcium et en vitamines essentielles. Incontournable des petits-déjeuners et gouters comoriens. Texture onctueuse, goût doux et savoureux.',
+  },
+  {
+    id: 'n9', name: 'Oeufs frais', price: 3.20,
+    imageUrl: 'img/oeufs.png',
+    category: 'Naturels', unit: 'boîte 12 oeufs', badge: 'new',
+    description: 'Oeufs frais du jour, élevés localement. Essentiels en cuisine : omelettes, gateaux, plats mijotés, mkatra et pâtisseries comoriennes. Source de protéines de haute qualité.',
+  },
+  {
+    id: 'n7', name: 'Sucre blanc — 5 kg', price: 6.50,
+    imageUrl: 'img/sucre-5kilo.png',
+    category: 'Naturels', unit: 'sac 5 kg',
+    description: 'Sucre blanc cristallisé en sac 5 kg. Produit de première nécessité dans chaque foyer comorien. Pour le thé, le café, les pâtisseries et toutes les préparations sucrées.',
+  },
+  {
     id: 'n1', name: 'Miel naturel des Comores', price: 12.00, emoji: '🍯',
     category: 'Naturels', unit: '500g', badge: 'new',
     description: 'Miel pur récolté dans les ruches des Comores, aux saveurs florales subtiles et complexes. 100% naturel, non chauffé et non traité. Parfait au petit-déjeuner ou comme édulcorant naturel.',
@@ -94,6 +172,18 @@ export const ALL_PRODUCTS: Product[] = [
     imageUrl: 'img/samli-beurre-clarifie.png',
     category: 'Huiles', unit: '900g', badge: 'best-seller',
     description: 'Beurre clarifié (ghee) de qualité supérieure, indispensable de la cuisine comorienne. Parfait pour les fritures, les mkatra foutra, les samoussas et les gâteaux de fête. Saveur riche et dorée.',
+  },
+  {
+    id: 'h4', name: 'Huile végétale — 1 L', price: 2.50,
+    imageUrl: 'img/huile-1l.png',
+    category: 'Huiles', unit: 'bouteille 1 L', badge: 'promo', originalPrice: 3.20,
+    description: 'Huile végétale raffinée polyvalente en bouteille 1 L. Légère, au goût neutre, idéale pour toutes les cuissons : friture, sauté, assaisonnement. Incontournable du quotidien.',
+  },
+  {
+    id: 'h5', name: 'Huile végétale — 5 L', price: 10.50,
+    imageUrl: 'img/huile-5litre.png',
+    category: 'Huiles', unit: 'bidon 5 L', badge: 'best-seller',
+    description: 'Grand bidon d’huile végétale 5 L, économique et pratique pour les familles et restaurateurs. Idéale pour les fritures, sautés et préparations comorienne au quotidien.',
   },
   {
     id: 'h1', name: 'Huile de coco vierge', price: 9.00, emoji: '🫙',
@@ -174,6 +264,12 @@ export const ALL_PRODUCTS: Product[] = [
     category: 'Boissons', unit: 'recharge 18,9 L', badge: 'promo',
     description: 'Recharge d’eau minérale Salsabil pour bonbonne 18,9 L. Tarif avantageux pour les clients possédant déjà leur bonbonne consignée. Idéal pour la maison, le bureau ou les restaurants.',
   },
+  {
+    id: 'ca1', name: 'Café moulú', price: 4.50,
+    imageUrl: 'img/caffee.png',
+    category: 'Café', unit: 'paquet 250g', badge: 'new',
+    description: 'Café moulú sélectionné, torréfaction médium. Arôme intense et saveur équilibrée, idéal pour la cafetière, la cafetière à piston ou le café filtré. Incontournable du matin comorien.',
+  },
 ];
 
-export const CATEGORIES = ['Tous', 'Légumes', 'Fruits', 'Épices', 'Céréales', 'Naturels', 'Huiles', 'Poissons', 'Boissons'];
+export const CATEGORIES = ['Tous', 'Légumes', 'Fruits', 'Épices', 'Céréales', 'Naturels', 'Huiles', 'Poissons', 'Boissons', 'Café'];

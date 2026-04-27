@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 
 import { ADMIN_TOKEN_KEY } from '../guards/admin-auth.guard';
 import { OrderService } from '../services/order.service';
+import { NotificationService } from '@shared/services/notification.service';
 
 @Component({
   selector: 'admin-layout',
@@ -12,8 +13,9 @@ import { OrderService } from '../services/order.service';
 })
 export class AdminLayout {
   private  readonly router       = inject(Router);
-  protected readonly orderService = inject(OrderService);
-  protected readonly sidebarOpen  = signal(true);
+  protected readonly orderService  = inject(OrderService);
+  protected readonly notifService  = inject(NotificationService);
+  protected readonly sidebarOpen   = signal(true);
 
   protected logout(): void {
     localStorage.removeItem(ADMIN_TOKEN_KEY);

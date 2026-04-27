@@ -5,7 +5,9 @@ import { RouterLink } from '@angular/router';
 
 import { CartService } from '@features/cart/cart.service';
 import { OrderService } from '@features/admin/services/order.service';
+import { PromoService } from './promo.service';
 import type { Order } from '@shared/models';
+import type { PromoCode } from './promo.service';
 
 export type Step           = 1 | 2 | 3 | 4;
 export type PaymentMethod  = 'carte' | 'paypal';
@@ -40,6 +42,7 @@ export const CHECKOUT_STEPS = [
 export class Checkout {
   protected readonly cartService    = inject(CartService);
   private  readonly orderService    = inject(OrderService);
+  private  readonly promoService    = inject(PromoService);
   private  readonly fb              = inject(FormBuilder);
 
   protected readonly step           = signal<Step>(1);
@@ -50,6 +53,11 @@ export class Checkout {
   protected readonly confirmedIle   = signal('');
   protected readonly confirmedVille = signal('');
 
+  protected readonly couponInput    = signal('');
+  protected readonly appliedPromo   = signal<PromoCode | null>(null);
+  protected readonly couponError    = signal('');
+  protected readonly couponSuccess  = signal(false);
+
   protected readonly checkoutSteps   = CHECKOUT_STEPS;
   protected readonly deliveryOptions = DELIVERY_OPTIONS;
   protected readonly items           = this.cartService.items;
@@ -58,8 +66,14 @@ export class Checkout {
   protected readonly selectedDelivery = computed(() =>
     DELIVERY_OPTIONS.find(d => d.id === this.deliveryOption())!
   );
-  protected readonly deliveryCost  = computed(() => this.selectedDelivery().price);
-  protected readonly orderTotal    = computed(() => this.subtotal() + this.deliveryCost());
+  protected readonly deliveryCost    = computed(() => this.selectedDelivery().price);
+  protected readonly discountAmount  = computed(() => {
+    const p = this.appliedPromo();
+    return p ? this.promoService.computeDiscount(p, this.subtotal()) : 0;
+  });
+  protected readonly orderTotal      = computed(() =>
+    this.subtotal() + this.deliveryCost() - this.discountAmount()
+  );
 
   protected readonly deliveryForm = this.fb.group({
     prenom:       ['', [Validators.required, Validators.minLength(2)]],
@@ -152,8 +166,11 @@ export class Checkout {
         emoji:     i.product.emoji,
         imageUrl:  i.product.imageUrl,
       })),
-      subtotal: this.subtotal(),
-      total:    this.orderTotal(),
+      subtotal:  this.subtotal(),
+      discount:  this.appliedPromo()
+        ? { code: this.appliedPromo()!.code, amount: this.discountAmount() }
+        : undefined,
+      total:     this.orderTotal(),
     };
 
     this.orderService.addOrder(order);
@@ -170,6 +187,30 @@ export class Checkout {
     const raw   = input.value.replace(/\D/g, '').slice(0, 16);
     input.value = raw.replace(/(\d{4})(?=\d)/g, '$1 ');
     this.cardForm.get('numero')?.setValue(input.value, { emitEvent: false });
+  }
+
+  protected setCouponInput(e: Event): void {
+    this.couponInput.set((e.target as HTMLInputElement).value);
+  }
+
+  protected applyCoupon(): void {
+    this.couponError.set('');
+    this.couponSuccess.set(false);
+    const result = this.promoService.validate(this.couponInput(), this.subtotal());
+    if (result.valid) {
+      this.appliedPromo.set(result.promo);
+      this.couponSuccess.set(true);
+    } else {
+      this.appliedPromo.set(null);
+      this.couponError.set(result.error);
+    }
+  }
+
+  protected removeCoupon(): void {
+    this.appliedPromo.set(null);
+    this.couponInput.set('');
+    this.couponError.set('');
+    this.couponSuccess.set(false);
   }
 
   protected paymentLabel(): string {

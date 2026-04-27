@@ -20,21 +20,21 @@ body {
 }
 
 @keyframes hero-crossfade-2 {
-  0%, 25%  { opacity: 0; }
-  31%, 50% { opacity: 1; }
+  0%, 25%   { opacity: 0; }
+  31%, 50%  { opacity: 1; }
   56%, 100% { opacity: 0; }
 }
 
 @keyframes hero-crossfade-3 {
-  0%, 50%  { opacity: 0; }
-  56%, 75% { opacity: 1; }
+  0%, 50%   { opacity: 0; }
+  56%, 75%  { opacity: 1; }
   81%, 100% { opacity: 0; }
 }
 
 @keyframes hero-crossfade-4 {
-  0%, 75%  { opacity: 0; }
-  81%, 94% { opacity: 1; }
-  100%     { opacity: 0; }
+  0%, 75%   { opacity: 0; }
+  81%, 94%  { opacity: 1; }
+  100%      { opacity: 0; }
 }
 
 .hero-slide-1 {

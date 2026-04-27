@@ -15,6 +15,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   'Huiles':   '#f7fee7',
   'Boissons': '#f0fdfa',
   'Ménager':  '#f1f5f9',
+  'Café':     '#fdf4e7',
 };
 
 @Component({

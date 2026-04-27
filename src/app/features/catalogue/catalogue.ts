@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ProductCard } from '@shared/ui/product-card/product-card';
 import type { Product } from '@shared/models';
 import { CartService } from '@features/cart/cart.service';
-import { ALL_PRODUCTS, CATEGORIES } from './products.data';
+import { ProductService } from '@features/admin/services/product.service';
 
 const PARAM_TO_CATEGORY: Record<string, string> = {
   legumes:  'Légumes',
@@ -26,7 +26,8 @@ type SortKey = 'name' | 'price-asc' | 'price-desc';
 })
 export class Catalogue {
   private  readonly cartService     = inject(CartService);
-  protected readonly categories     = CATEGORIES;
+  private  readonly productService  = inject(ProductService);
+  protected readonly categories     = this.productService.categories;
   protected readonly activeCategory = signal('Tous');
   protected readonly sortBy         = signal<SortKey>('name');
 
@@ -38,12 +39,13 @@ export class Catalogue {
   }
 
   protected readonly filteredProducts = computed(() => {
-    const cat  = this.activeCategory();
-    const sort = this.sortBy();
+    const cat      = this.activeCategory();
+    const sort     = this.sortBy();
+    const products = this.productService.products();
 
     let list = cat === 'Tous'
-      ? ALL_PRODUCTS
-      : ALL_PRODUCTS.filter(p => p.category === cat);
+      ? products
+      : products.filter(p => p.category === cat);
 
     return [...list].sort((a, b) => {
       if (sort === 'price-asc')  return a.price - b.price;

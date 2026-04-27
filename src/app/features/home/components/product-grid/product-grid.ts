@@ -1,12 +1,16 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { ProductCard } from '@shared/ui/product-card/product-card';
 import { CartService } from '@features/cart/cart.service';
-import { ALL_PRODUCTS } from '@features/catalogue/products.data';
+import { ProductService } from '@features/admin/services/product.service';
+import type { Product } from '@shared/models';
 
 const FEATURED_IDS = [
-  'c1',  'h3',  'p4',  'p5',  'n2',  'n3',
+  'c1',  'r1',  'r5',  'r8',  'r2',  'r6',
+  'c3',  'c4',  'h4',  'h5',  'n7',
+  'n8',  'n9',  'ca1',
+  'h3',  'p4',  'p5',  'n2',  'n3',
   'n4',  'n5',  'n6',
   'b1',  'b2',  'm1',  'm2',
   'n1',  'e2',
@@ -19,12 +23,16 @@ const FEATURED_IDS = [
   imports: [RouterLink, ProductCard],
 })
 export class ProductGrid {
-  private  readonly cartService = inject(CartService);
-  protected readonly products   = FEATURED_IDS
-    .map(id => ALL_PRODUCTS.find(p => p.id === id))
-    .filter(p => p !== undefined);
+  private  readonly cartService    = inject(CartService);
+  private  readonly productService = inject(ProductService);
 
-  protected addToCart(product: typeof ALL_PRODUCTS[0]): void {
+  protected readonly products = computed(() =>
+    FEATURED_IDS
+      .map(id => this.productService.products().find(p => p.id === id))
+      .filter((p): p is Product => p !== undefined)
+  );
+
+  protected addToCart(product: Product): void {
     this.cartService.addToCart(product);
   }
 }
