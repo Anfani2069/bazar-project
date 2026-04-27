@@ -9,7 +9,7 @@ const DEMO_ORDERS: Order[] = [
     id: 'BC-K3N7P2',
     date: new Date(Date.now() - 3_600_000).toISOString(),
     status: 'pending',
-    customer: { prenom: 'Fatima', nom: 'Ali', telephone: '3210101', email: 'fatima@mail.com', ile: 'Grande Comore (Ngazidja)', ville: 'Moroni', adresse: 'Quartier Badjanani' },
+    recipient: { prenom: 'Fatima', nom: 'Ali', telephone: '3210101', email: 'fatima@mail.com', ile: 'Grande Comore (Ngazidja)', ville: 'Moroni', adresse: 'Quartier Badjanani' },
     delivery: { method: 'domicile', label: 'Livraison à domicile', cost: 8.90 },
     payment:  { method: 'carte',   label: '💳 Carte bancaire' },
     items: [
@@ -22,7 +22,7 @@ const DEMO_ORDERS: Order[] = [
     id: 'BC-M8L4X1',
     date: new Date(Date.now() - 86_400_000).toISOString(),
     status: 'processing',
-    customer: { prenom: 'Mohamed', nom: 'Hamidi', telephone: '3330202', ile: 'Anjouan (Ndzuani)', ville: 'Mutsamudu', adresse: 'Centre ville', instructions: 'Appeler avant livraison' },
+    recipient: { prenom: 'Mohamed', nom: 'Hamidi', telephone: '3330202', ile: 'Anjouan (Ndzuani)', ville: 'Mutsamudu', adresse: 'Centre ville', instructions: 'Appeler avant livraison' },
     delivery: { method: 'express', label: 'Livraison express',   cost: 15.00 },
     payment:  { method: 'carte',   label: '💳 Carte bancaire' },
     items: [
@@ -35,7 +35,7 @@ const DEMO_ORDERS: Order[] = [
     id: 'BC-Z2Q9R5',
     date: new Date(Date.now() - 172_800_000).toISOString(),
     status: 'shipped',
-    customer: { prenom: 'Aisha', nom: 'Said', telephone: '3215050', email: 'aisha@mail.com', ile: 'Mohéli (Mwali)', ville: 'Fomboni', adresse: 'Quartier Hamahamet' },
+    recipient: { prenom: 'Aisha', nom: 'Said', telephone: '3215050', email: 'aisha@mail.com', ile: 'Mohéli (Mwali)', ville: 'Fomboni', adresse: 'Quartier Hamahamet' },
     delivery: { method: 'domicile', label: 'Livraison à domicile', cost: 8.90 },
     payment:  { method: 'paypal',   label: '🅿️ PayPal' },
     items: [
@@ -48,7 +48,7 @@ const DEMO_ORDERS: Order[] = [
     id: 'BC-P5T1W8',
     date: new Date(Date.now() - 432_000_000).toISOString(),
     status: 'delivered',
-    customer: { prenom: 'Ibrahim', nom: 'Mze', telephone: '3219999', ile: 'Grande Comore (Ngazidja)', ville: 'Mitsamiouli', adresse: 'Face à la mosquée' },
+    recipient: { prenom: 'Ibrahim', nom: 'Mze', telephone: '3219999', ile: 'Grande Comore (Ngazidja)', ville: 'Mitsamiouli', adresse: 'Face à la mosquée' },
     delivery: { method: 'relais', label: 'Point de retrait', cost: 0 },
     payment:  { method: 'carte',  label: '💳 Carte bancaire' },
     items: [
@@ -93,7 +93,15 @@ export class OrderService {
   private _load(): Order[] {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? (JSON.parse(raw) as Order[]) : DEMO_ORDERS;
+      if (!raw) return DEMO_ORDERS;
+      const list = JSON.parse(raw) as (Order & { customer?: Order['recipient'] })[];
+      return list.map(o => {
+        if (!o.recipient && o.customer) {
+          const { customer, ...rest } = o;
+          return { ...rest, recipient: customer } as Order;
+        }
+        return o as Order;
+      });
     } catch {
       return DEMO_ORDERS;
     }

@@ -145,7 +145,7 @@ export class AdminReports {
     const orderRows = orders.map(o => `
       <tr>
         <td style="font-family:monospace;color:#0B3D34;font-weight:700">${o.id}</td>
-        <td>${o.customer.prenom} ${o.customer.nom} — ${o.customer.ville}</td>
+        <td>${o.recipient.prenom} ${o.recipient.nom} — ${o.recipient.ville}</td>
         <td>${this.datePipe.transform(o.date,'dd/MM/yy HH:mm') ?? ''}</td>
         <td>${o.delivery.label}</td>
         <td style="text-align:right;font-weight:700;color:#0B3D34">${fmt(o.total)}</td>

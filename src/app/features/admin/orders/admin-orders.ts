@@ -40,10 +40,12 @@ export class AdminOrders {
     if (q) {
       list = list.filter(o =>
         o.id.toLowerCase().includes(q) ||
-        o.customer.nom.toLowerCase().includes(q) ||
-        o.customer.prenom.toLowerCase().includes(q) ||
-        o.customer.ville.toLowerCase().includes(q) ||
-        o.customer.telephone.includes(q)
+        (o.orderedBy?.nom ?? '').toLowerCase().includes(q) ||
+        (o.orderedBy?.prenom ?? '').toLowerCase().includes(q) ||
+        o.recipient.nom.toLowerCase().includes(q) ||
+        o.recipient.prenom.toLowerCase().includes(q) ||
+        o.recipient.ville.toLowerCase().includes(q) ||
+        o.recipient.telephone.includes(q)
       );
     }
     return list;
@@ -145,8 +147,8 @@ export class AdminOrders {
     const rows = this.filteredOrders().map(o => `
       <tr>
         <td style="font-family:monospace;font-weight:700;color:#0B3D34">${o.id}</td>
-        <td>${o.customer.prenom} ${o.customer.nom}<br><small style="color:#888">${o.customer.telephone}</small></td>
-        <td>${o.customer.ile}<br><small style="color:#888">${o.customer.ville}</small></td>
+        <td>${o.orderedBy ? `${o.orderedBy.prenom} ${o.orderedBy.nom}<br><small style="color:#888">${o.orderedBy.telephone}</small>` : '—'}</td>
+        <td>${o.recipient.prenom} ${o.recipient.nom}<br><small style="color:#888">${o.recipient.ile}, ${o.recipient.ville}</small></td>
         <td>${this.datePipe.transform(o.date, 'dd/MM/yy HH:mm') ?? ''}</td>
         <td>${o.delivery.label}</td>
         <td style="text-align:right;font-weight:700;color:#0B3D34">${fmt(o.total)}</td>
@@ -182,7 +184,7 @@ export class AdminOrders {
 </div>
 <div class="filter-info">${filterLabel}${searchLabel} — ${this.filteredOrders().length} commande(s)</div>
 <table>
-  <thead><tr><th>N° Commande</th><th>Client</th><th>Île / Ville</th><th>Date</th><th>Livraison</th><th style="text-align:right">Total</th><th>Statut</th></tr></thead>
+  <thead><tr><th>N° Commande</th><th>Commandé par</th><th>Destinataire / Ville</th><th>Date</th><th>Livraison</th><th style="text-align:right">Total</th><th>Statut</th></tr></thead>
   <tbody>${rows}</tbody>
 </table>
 <div class="footer">Bazar Comores — Liste des commandes générée automatiquement</div>
@@ -272,13 +274,16 @@ export class AdminOrders {
   <div class="section">
     <div class="section-title">Destinataire</div>
     <div class="info-grid">
-      <div class="row"><span class="label">Nom</span><span class="value">${order.customer.prenom} ${order.customer.nom}</span></div>
-      <div class="row"><span class="label">Téléphone</span><span class="value">${order.customer.telephone}</span></div>
-      ${order.customer.email ? `<div class="row"><span class="label">Email</span><span class="value">${order.customer.email}</span></div>` : ''}
-      <div class="row"><span class="label">Île</span><span class="value">${order.customer.ile}</span></div>
-      <div class="row"><span class="label">Ville</span><span class="value">${order.customer.ville}</span></div>
-      <div class="row"><span class="label">Adresse</span><span class="value">${order.customer.adresse}</span></div>
-      ${order.customer.instructions ? `<div class="row"><span class="label">Instructions</span><span class="value">${order.customer.instructions}</span></div>` : ''}
+      ${order.orderedBy ? `
+      <div class="row"><span class="label">Commandé par</span><span class="value">${order.orderedBy.prenom} ${order.orderedBy.nom} (${order.orderedBy.type === 'account' ? 'Compte' : 'Invité'})</span></div>
+      <div class="row"><span class="label">Tél. expéditeur</span><span class="value">${order.orderedBy.telephone}</span></div>` : ''}
+      <div class="row"><span class="label">Destinataire</span><span class="value">${order.recipient.prenom} ${order.recipient.nom}</span></div>
+      <div class="row"><span class="label">Téléphone</span><span class="value">${order.recipient.telephone}</span></div>
+      ${order.recipient.email ? `<div class="row"><span class="label">Email</span><span class="value">${order.recipient.email}</span></div>` : ''}
+      <div class="row"><span class="label">Île</span><span class="value">${order.recipient.ile}</span></div>
+      <div class="row"><span class="label">Ville</span><span class="value">${order.recipient.ville}</span></div>
+      <div class="row"><span class="label">Adresse</span><span class="value">${order.recipient.adresse}</span></div>
+      ${order.recipient.instructions ? `<div class="row"><span class="label">Instructions</span><span class="value">${order.recipient.instructions}</span></div>` : ''}
     </div>
   </div>
 

@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { CartService } from '@features/cart/cart.service';
 import { OrderService } from '@features/admin/services/order.service';
 import { PromoService } from './promo.service';
+import { CustomerAuthService } from '@shared/services/customer-auth.service';
 import type { Order } from '@shared/models';
 import type { PromoCode } from './promo.service';
 
@@ -43,8 +44,14 @@ export class Checkout {
   protected readonly cartService    = inject(CartService);
   private  readonly orderService    = inject(OrderService);
   private  readonly promoService    = inject(PromoService);
+  readonly  authService             = inject(CustomerAuthService);
   private  readonly fb              = inject(FormBuilder);
 
+  protected readonly guestMode      = signal<'guest' | 'account' | null>(null);
+  protected readonly authPanel      = signal<'login' | 'register' | null>(null);
+  protected readonly authError      = signal('');
+  protected readonly guestPanel     = signal(false);
+  protected readonly orderedBy      = signal<Order['orderedBy'] | null>(null);
   protected readonly step           = signal<Step>(1);
   protected readonly paymentMethod  = signal<PaymentMethod>('carte');
   protected readonly deliveryOption = signal<DeliveryOption>('domicile');
@@ -121,6 +128,89 @@ export class Checkout {
   protected setDelivery(opt: DeliveryOption): void { this.deliveryOption.set(opt); }
   protected setPayment(method: PaymentMethod): void { this.paymentMethod.set(method); }
 
+  protected openGuestPanel(): void {
+    this.guestPanel.set(true);
+    this.authPanel.set(null);
+    this.guestInfoForm.reset();
+  }
+
+  protected readonly guestInfoForm = this.fb.group({
+    prenom:    ['', [Validators.required, Validators.minLength(2)]],
+    nom:       ['', [Validators.required, Validators.minLength(2)]],
+    telephone: ['', Validators.required],
+    email:     [''],
+  });
+
+  protected submitGuestInfo(): void {
+    if (this.guestInfoForm.invalid) { this.guestInfoForm.markAllAsTouched(); return; }
+    const v = this.guestInfoForm.getRawValue();
+    this.orderedBy.set({
+      prenom:    v.prenom    ?? '',
+      nom:       v.nom       ?? '',
+      telephone: v.telephone ?? '',
+      email:     v.email     || undefined,
+      type:      'guest',
+    });
+    this.guestMode.set('guest');
+    this.guestPanel.set(false);
+  }
+
+  protected openAuthPanel(tab: 'login' | 'register'): void {
+    this.authPanel.set(tab);
+    this.guestPanel.set(false);
+    this.authError.set('');
+    this.loginForm.reset();
+    this.registerForm.reset();
+  }
+
+  protected readonly loginForm = this.fb.group({
+    email:    ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required],
+  });
+
+  protected readonly registerForm = this.fb.group({
+    prenom:    ['', [Validators.required, Validators.minLength(2)]],
+    nom:       ['', [Validators.required, Validators.minLength(2)]],
+    email:     ['', [Validators.required, Validators.email]],
+    telephone: ['', Validators.required],
+    password:  ['', [Validators.required, Validators.minLength(6)]],
+  });
+
+  protected submitLogin(): void {
+    if (this.loginForm.invalid) { this.loginForm.markAllAsTouched(); return; }
+    const { email, password } = this.loginForm.getRawValue();
+    const res = this.authService.login(email ?? '', password ?? '');
+    if (!res.ok) { this.authError.set(res.error ?? 'Erreur.'); return; }
+    const u = this.authService.currentUser()!;
+    this.orderedBy.set({ prenom: u.prenom, nom: u.nom,
+                         telephone: u.telephone, email: u.email, type: 'account' });
+    this.guestMode.set('account');
+    this.authPanel.set(null);
+  }
+
+  protected submitRegister(): void {
+    if (this.registerForm.invalid) { this.registerForm.markAllAsTouched(); return; }
+    const v = this.registerForm.getRawValue();
+    const res = this.authService.register({
+      prenom:    v.prenom    ?? '',
+      nom:       v.nom       ?? '',
+      email:     v.email     ?? '',
+      telephone: v.telephone ?? '',
+      password:  v.password  ?? '',
+    });
+    if (!res.ok) { this.authError.set(res.error ?? 'Erreur.'); return; }
+    this.orderedBy.set({ prenom: v.prenom ?? '', nom: v.nom ?? '',
+                         telephone: v.telephone ?? '', email: v.email || undefined, type: 'account' });
+    this.guestMode.set('account');
+    this.authPanel.set(null);
+  }
+
+  protected fillSameAsMe(): void {
+    const me = this.orderedBy();
+    if (!me) return;
+    this.deliveryForm.patchValue({ prenom: me.prenom, nom: me.nom, telephone: me.telephone, email: me.email ?? '' });
+  }
+
   protected goToStep(s: Step): void {
     if (s < this.step()) this.step.set(s);
   }
@@ -146,7 +236,8 @@ export class Checkout {
       id:   ref,
       date: new Date().toISOString(),
       status: 'pending',
-      customer: {
+      orderedBy:  this.orderedBy() ?? undefined,
+      recipient: {
         prenom:        f['prenom'] ?? '',
         nom:           f['nom'] ?? '',
         telephone:     f['telephone'] ?? '',

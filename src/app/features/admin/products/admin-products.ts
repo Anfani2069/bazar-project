@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
 
 import { ProductService } from '../services/product.service';
 import { NotificationService } from '@shared/services/notification.service';
@@ -11,7 +11,7 @@ import type { Product } from '@shared/models';
   selector: 'admin-products',
   templateUrl: './admin-products.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, CurrencyPipe],
+  imports: [ReactiveFormsModule, CurrencyPipe, DecimalPipe],
 })
 export class AdminProducts {
   private readonly productService  = inject(ProductService);
@@ -27,6 +27,12 @@ export class AdminProducts {
   protected readonly editingId   = signal<string | null>(null);
   protected readonly deleteId      = signal<string | null>(null);
   protected readonly resetConfirm  = signal(false);
+  protected readonly viewId        = signal<string | null>(null);
+
+  protected readonly viewProduct = computed(() => {
+    const id = this.viewId();
+    return id ? this.products().find(p => p.id === id) ?? null : null;
+  });
 
   protected readonly filtered = computed(() => {
     const q   = this.search().toLowerCase().trim();
@@ -49,6 +55,9 @@ export class AdminProducts {
     emoji:         [''],
     description:   [''],
   });
+
+  protected openView(p: Product): void  { this.viewId.set(p.id); }
+  protected closeView(): void            { this.viewId.set(null); }
 
   protected openAdd(): void {
     this.editingId.set(null);

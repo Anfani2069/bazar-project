@@ -13,7 +13,14 @@ export interface Order {
   id:     string;
   date:   string;
   status: OrderStatus;
-  customer: {
+  orderedBy?: {
+    prenom:    string;
+    nom:       string;
+    telephone: string;
+    email?:    string;
+    type:      'guest' | 'account';
+  };
+  recipient: {
     prenom:        string;
     nom:           string;
     telephone:     string;

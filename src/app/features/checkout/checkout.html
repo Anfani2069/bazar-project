@@ -8,8 +8,8 @@
     </div>
   </div>
 
-  <!-- Stepper -->
-  @if (step() < 4) {
+  <!-- Stepper (uniquement après sélection du mode) -->
+  @if (guestMode() && step() < 4) {
     <div class="bg-white border-b border-border">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
         <div class="flex items-center max-w-md mx-auto">
@@ -53,9 +53,283 @@
     @if (items().length > 0 || step() === 4) {
 
       <!-- ══════════════════════════════════════
+           ÉCRAN 0 — Choix du mode de commande
+           ══════════════════════════════════════ -->
+      @if (!guestMode() && step() < 4) {
+        <div class="flex flex-col items-center py-10">
+          <p class="text-xs font-bold text-accent uppercase tracking-widest mb-1">Commande</p>
+          <h2 class="text-2xl font-black text-foreground mb-2">Comment souhaitez-vous continuer ?</h2>
+          <p class="text-sm text-muted mb-8">Choisissez un mode pour finaliser votre commande.</p>
+
+          <!-- Deux cartes de choix -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full max-w-2xl">
+
+            <!-- Invité -->
+            <button type="button" (click)="openGuestPanel()"
+                    class="group flex flex-col items-center gap-4 p-8 bg-white rounded-2xl shadow-sm border-2
+                           transition-all text-center"
+                    [class]="guestPanel() ? 'border-primary shadow-md' : 'border-border hover:border-primary hover:shadow-md'">
+              <div class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center
+                          group-hover:bg-primary/20 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                     class="text-primary">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </div>
+              <div>
+                <p class="font-black text-foreground text-lg">Commander en tant qu'invité</p>
+                <p class="text-sm text-muted mt-1">Rapide et sans inscription. Remplissez vos coordonnées lors de la commande.</p>
+              </div>
+              <span class="mt-auto w-full py-2.5 rounded-xl font-semibold text-sm transition-colors"
+                    [class]="guestPanel() ? 'bg-primary text-white' : 'bg-primary text-white group-hover:bg-primary-hover'">
+                Continuer sans compte →
+              </span>
+            </button>
+
+            <!-- Connexion -->
+            <button type="button" (click)="openAuthPanel('login')"
+                    class="group flex flex-col items-center gap-4 p-8 bg-white rounded-2xl shadow-sm border-2
+                           transition-all text-center"
+                    [class]="authPanel() ? 'border-primary shadow-md' : 'border-border hover:border-primary hover:shadow-md'">
+              <div class="w-16 h-16 rounded-2xl bg-emerald-50 flex items-center justify-center
+                          group-hover:bg-emerald-100 transition-colors"
+                   [class]="authPanel() ? 'bg-emerald-100' : ''">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                     class="text-emerald-600">
+                  <rect x="3" y="11" width="18" height="11" rx="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </div>
+              <div>
+                <p class="font-black text-foreground text-lg">Se connecter / S'inscrire</p>
+                <p class="text-sm text-muted mt-1">Accédez à votre historique et bénéficiez d'un suivi personnalisé.</p>
+              </div>
+              <span class="mt-auto w-full py-2.5 rounded-xl border-2 font-semibold text-sm transition-colors"
+                    [class]="authPanel() ? 'border-primary bg-primary/5 text-primary' : 'border-emerald-500 text-emerald-600 group-hover:bg-emerald-50'">
+                Se connecter →
+              </span>
+            </button>
+
+          </div>
+
+          <!-- Panel Invité : saisie des coordonnées -->
+          @if (guestPanel()) {
+            <div class="w-full max-w-md mt-6 bg-white rounded-2xl shadow-sm border border-border overflow-hidden">
+              <div class="px-6 pt-5 pb-2 border-b border-border">
+                <p class="font-black text-foreground">Vos coordonnées</p>
+                <p class="text-xs text-muted mt-0.5">Ces informations seront utilisées pour livrer votre commande.</p>
+              </div>
+              <form [formGroup]="guestInfoForm" (ngSubmit)="submitGuestInfo()" class="p-6 flex flex-col gap-4">
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-foreground uppercase tracking-wide">
+                      Prénom <span class="text-error">*</span>
+                    </label>
+                    <input type="text" formControlName="prenom" placeholder="Ali"
+                           class="px-4 py-2.5 rounded-xl border-2 border-border text-sm text-foreground
+                                  focus:outline-none focus:border-primary transition-colors" />
+                    @if (guestInfoForm.get('prenom')?.invalid && guestInfoForm.get('prenom')?.touched) {
+                      <p class="text-xs text-error">Requis.</p>
+                    }
+                  </div>
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-foreground uppercase tracking-wide">
+                      Nom <span class="text-error">*</span>
+                    </label>
+                    <input type="text" formControlName="nom" placeholder="Abdou"
+                           class="px-4 py-2.5 rounded-xl border-2 border-border text-sm text-foreground
+                                  focus:outline-none focus:border-primary transition-colors" />
+                    @if (guestInfoForm.get('nom')?.invalid && guestInfoForm.get('nom')?.touched) {
+                      <p class="text-xs text-error">Requis.</p>
+                    }
+                  </div>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-xs font-bold text-foreground uppercase tracking-wide">
+                    Téléphone <span class="text-error">*</span>
+                  </label>
+                  <div class="flex rounded-xl border-2 border-border overflow-hidden focus-within:border-primary transition-colors">
+                    <span class="px-3 flex items-center bg-surface-alt text-sm text-muted shrink-0 border-r border-border">
+                      🇰🇲 +269
+                    </span>
+                    <input type="tel" formControlName="telephone" placeholder="321 00 00"
+                           class="flex-1 px-3 py-2.5 text-sm text-foreground bg-white focus:outline-none" />
+                  </div>
+                  @if (guestInfoForm.get('telephone')?.invalid && guestInfoForm.get('telephone')?.touched) {
+                    <p class="text-xs text-error">Téléphone requis.</p>
+                  }
+                </div>
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-xs font-bold text-foreground uppercase tracking-wide">
+                    E-mail <span class="text-muted font-normal normal-case">(recommandé)</span>
+                  </label>
+                  <input type="email" formControlName="email" placeholder="exemple@mail.com"
+                         class="px-4 py-2.5 rounded-xl border-2 border-border text-sm text-foreground
+                                focus:outline-none focus:border-primary transition-colors" />
+                </div>
+                <button type="submit"
+                        class="w-full py-3 rounded-xl bg-primary text-white font-bold text-sm
+                               hover:bg-primary-hover transition-colors">
+                  Continuer vers ma commande →
+                </button>
+              </form>
+            </div>
+          }
+
+          <!-- Panel Connexion / Inscription -->
+          @if (authPanel()) {
+            <div class="w-full max-w-md mt-6 bg-white rounded-2xl shadow-sm border border-border overflow-hidden">
+
+              <!-- Onglets -->
+              <div class="grid grid-cols-2 border-b border-border">
+                <button type="button" (click)="openAuthPanel('login')"
+                        class="py-3.5 text-sm font-bold transition-colors"
+                        [class]="authPanel() === 'login'
+                          ? 'text-primary border-b-2 border-primary bg-primary/5'
+                          : 'text-muted hover:text-foreground'">
+                  Se connecter
+                </button>
+                <button type="button" (click)="openAuthPanel('register')"
+                        class="py-3.5 text-sm font-bold transition-colors"
+                        [class]="authPanel() === 'register'
+                          ? 'text-primary border-b-2 border-primary bg-primary/5'
+                          : 'text-muted hover:text-foreground'">
+                  Créer un compte
+                </button>
+              </div>
+
+              <div class="p-6">
+
+                <!-- Erreur -->
+                @if (authError()) {
+                  <div class="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700
+                               rounded-xl px-4 py-3 text-sm mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         class="shrink-0">
+                      <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                    {{ authError() }}
+                  </div>
+                }
+
+                <!-- ── Formulaire Connexion ── -->
+                @if (authPanel() === 'login') {
+                  <form [formGroup]="loginForm" (ngSubmit)="submitLogin()" class="flex flex-col gap-4">
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-xs font-bold text-foreground uppercase tracking-wide">
+                        E-mail <span class="text-error">*</span>
+                      </label>
+                      <input type="email" formControlName="email" placeholder="exemple@mail.com"
+                             class="px-4 py-2.5 rounded-xl border-2 border-border text-sm text-foreground
+                                    focus:outline-none focus:border-primary transition-colors" />
+                      @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+                        <p class="text-xs text-error">E-mail invalide.</p>
+                      }
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-xs font-bold text-foreground uppercase tracking-wide">
+                        Mot de passe <span class="text-error">*</span>
+                      </label>
+                      <input type="password" formControlName="password" placeholder="••••••••"
+                             class="px-4 py-2.5 rounded-xl border-2 border-border text-sm text-foreground
+                                    focus:outline-none focus:border-primary transition-colors" />
+                      @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+                        <p class="text-xs text-error">Mot de passe requis.</p>
+                      }
+                    </div>
+                    <button type="submit"
+                            class="w-full py-3 rounded-xl bg-primary text-white font-bold text-sm
+                                   hover:bg-primary-hover transition-colors">
+                      Se connecter et continuer →
+                    </button>
+                  </form>
+                }
+
+                <!-- ── Formulaire Inscription ── -->
+                @if (authPanel() === 'register') {
+                  <form [formGroup]="registerForm" (ngSubmit)="submitRegister()" class="flex flex-col gap-4">
+                    <div class="grid grid-cols-2 gap-3">
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-foreground uppercase tracking-wide">
+                          Prénom <span class="text-error">*</span>
+                        </label>
+                        <input type="text" formControlName="prenom" placeholder="Ali"
+                               class="px-4 py-2.5 rounded-xl border-2 border-border text-sm text-foreground
+                                      focus:outline-none focus:border-primary transition-colors" />
+                        @if (registerForm.get('prenom')?.invalid && registerForm.get('prenom')?.touched) {
+                          <p class="text-xs text-error">Requis.</p>
+                        }
+                      </div>
+                      <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-foreground uppercase tracking-wide">
+                          Nom <span class="text-error">*</span>
+                        </label>
+                        <input type="text" formControlName="nom" placeholder="Abdou"
+                               class="px-4 py-2.5 rounded-xl border-2 border-border text-sm text-foreground
+                                      focus:outline-none focus:border-primary transition-colors" />
+                        @if (registerForm.get('nom')?.invalid && registerForm.get('nom')?.touched) {
+                          <p class="text-xs text-error">Requis.</p>
+                        }
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-xs font-bold text-foreground uppercase tracking-wide">
+                        E-mail <span class="text-error">*</span>
+                      </label>
+                      <input type="email" formControlName="email" placeholder="exemple@mail.com"
+                             class="px-4 py-2.5 rounded-xl border-2 border-border text-sm text-foreground
+                                    focus:outline-none focus:border-primary transition-colors" />
+                      @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+                        <p class="text-xs text-error">E-mail invalide.</p>
+                      }
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-xs font-bold text-foreground uppercase tracking-wide">
+                        Téléphone <span class="text-error">*</span>
+                      </label>
+                      <input type="tel" formControlName="telephone" placeholder="321 00 00"
+                             class="px-4 py-2.5 rounded-xl border-2 border-border text-sm text-foreground
+                                    focus:outline-none focus:border-primary transition-colors" />
+                      @if (registerForm.get('telephone')?.invalid && registerForm.get('telephone')?.touched) {
+                        <p class="text-xs text-error">Requis.</p>
+                      }
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                      <label class="text-xs font-bold text-foreground uppercase tracking-wide">
+                        Mot de passe <span class="text-error">*</span>
+                      </label>
+                      <input type="password" formControlName="password" placeholder="Min. 6 caractères"
+                             class="px-4 py-2.5 rounded-xl border-2 border-border text-sm text-foreground
+                                    focus:outline-none focus:border-primary transition-colors" />
+                      @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+                        <p class="text-xs text-error">Min. 6 caractères.</p>
+                      }
+                    </div>
+                    <button type="submit"
+                            class="w-full py-3 rounded-xl bg-primary text-white font-bold text-sm
+                                   hover:bg-primary-hover transition-colors">
+                      Créer mon compte et continuer →
+                    </button>
+                  </form>
+                }
+
+              </div>
+            </div>
+          }
+
+          <a routerLink="/panier"
+             class="mt-8 text-sm text-muted hover:text-primary transition-colors">← Retour au panier</a>
+        </div>
+      }
+
+      <!-- ══════════════════════════════════════
            ÉTAPE 1 — Récapitulatif & Livraison
            ══════════════════════════════════════ -->
-      @if (step() === 1) {
+      @if (guestMode() && step() === 1) {
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 items-start">
 
           <!-- Main -->
@@ -208,12 +482,43 @@
       <!-- ══════════════════════════════════════
            ÉTAPE 2 — Informations de livraison
            ══════════════════════════════════════ -->
-      @if (step() === 2) {
+      @if (guestMode() && step() === 2) {
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 items-start">
 
           <!-- Formulaire -->
           <form [formGroup]="deliveryForm" class="bg-white rounded-2xl shadow-sm p-6 flex flex-col gap-5">
-            <h2 class="text-base font-black text-foreground">Informations de livraison</h2>
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-base font-black text-foreground">Informations du destinataire</h2>
+                <p class="text-xs text-muted mt-0.5">La personne qui va recevoir la commande</p>
+              </div>
+              @if (orderedBy()) {
+                <button type="button" (click)="fillSameAsMe()"
+                        class="flex items-center gap-1.5 text-xs font-semibold bg-surface-alt border border-border
+                               text-muted hover:border-primary hover:text-primary px-3 py-1.5 rounded-xl transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                       fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  Livrer à moi-même
+                </button>
+              }
+            </div>
+            @if (orderedBy()) {
+              <div class="flex items-center gap-2 bg-[#f4f6f9] rounded-xl px-4 py-2.5 text-xs text-muted">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+                Commandé par&nbsp;<strong class="text-foreground">{{ orderedBy()!.prenom }} {{ orderedBy()!.nom }}</strong>
+                &nbsp;·&nbsp;
+                @if (orderedBy()!.type === 'account') {
+                  <span class="text-emerald-600 font-semibold">Compte client</span>
+                } @else {
+                  <span class="font-semibold">Invité</span>
+                }
+              </div>
+            }
 
             <!-- Prénom / Nom -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -266,7 +571,7 @@
               </div>
               <div class="flex flex-col gap-1.5">
                 <label class="text-xs font-bold text-foreground uppercase tracking-wide" for="email">
-                  Email <span class="text-muted font-normal normal-case">(optionnel)</span>
+                  Email <span class="text-muted font-normal normal-case">(recommandé)</span>
                 </label>
                 <input id="email" type="email" formControlName="email"
                        placeholder="exemple@mail.com"
@@ -381,7 +686,7 @@
       <!-- ══════════════════════════════════════
            ÉTAPE 3 — Paiement
            ══════════════════════════════════════ -->
-      @if (step() === 3) {
+      @if (guestMode() && step() === 3) {
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 items-start">
 
           <!-- Méthodes de paiement -->

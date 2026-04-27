@@ -85,11 +85,11 @@
                 (click)="openOrder(order)">
               <td class="px-6 py-4 font-mono text-xs font-bold text-primary">{{ order.id }}</td>
               <td class="px-6 py-4">
-                <p class="font-semibold text-foreground">{{ order.customer.prenom }} {{ order.customer.nom }}</p>
-                <p class="text-xs text-muted">{{ order.customer.telephone }}</p>
+                <p class="font-semibold text-foreground">{{ order.recipient.prenom }} {{ order.recipient.nom }}</p>
+                <p class="text-xs text-muted">{{ order.recipient.telephone }}</p>
               </td>
               <td class="px-6 py-4 text-muted text-xs">{{ order.date | date:'dd/MM/yyyy HH:mm' }}</td>
-              <td class="px-6 py-4 text-xs text-foreground">{{ order.customer.ile }}</td>
+              <td class="px-6 py-4 text-xs text-foreground">{{ order.recipient.ile }}</td>
               <td class="px-6 py-4 text-right font-bold text-primary">
                 {{ order.total | currency:'EUR':'symbol':'1.2-2' }}
               </td>
@@ -162,16 +162,16 @@
         <!-- Client -->
         <div class="bg-surface-alt rounded-2xl p-4 flex flex-col gap-2">
           <p class="text-xs font-bold text-muted uppercase tracking-wide mb-1">Destinataire</p>
-          <p class="font-semibold text-foreground">{{ selectedOrder()!.customer.prenom }} {{ selectedOrder()!.customer.nom }}</p>
-          <p class="text-sm text-muted">📞 {{ selectedOrder()!.customer.telephone }}</p>
-          @if (selectedOrder()!.customer.email) {
-            <p class="text-sm text-muted">✉️ {{ selectedOrder()!.customer.email }}</p>
+          <p class="font-semibold text-foreground">{{ selectedOrder()!.recipient.prenom }} {{ selectedOrder()!.recipient.nom }}</p>
+          <p class="text-sm text-muted">📞 {{ selectedOrder()!.recipient.telephone }}</p>
+          @if (selectedOrder()!.recipient.email) {
+            <p class="text-sm text-muted">✉️ {{ selectedOrder()!.recipient.email }}</p>
           }
-          <p class="text-sm text-muted">🏝️ {{ selectedOrder()!.customer.ile }}</p>
-          <p class="text-sm text-muted">📍 {{ selectedOrder()!.customer.ville }} — {{ selectedOrder()!.customer.adresse }}</p>
-          @if (selectedOrder()!.customer.instructions) {
+          <p class="text-sm text-muted">🏝️ {{ selectedOrder()!.recipient.ile }}</p>
+          <p class="text-sm text-muted">📍 {{ selectedOrder()!.recipient.ville }} — {{ selectedOrder()!.recipient.adresse }}</p>
+          @if (selectedOrder()!.recipient.instructions) {
             <p class="text-xs text-muted bg-white rounded-xl px-3 py-2 border border-border mt-1">
-              💬 {{ selectedOrder()!.customer.instructions }}
+              💬 {{ selectedOrder()!.recipient.instructions }}
             </p>
           }
         </div>

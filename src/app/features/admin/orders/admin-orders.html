@@ -126,8 +126,8 @@
         <thead>
           <tr class="border-b border-border bg-surface-alt">
             <th class="text-left px-5 py-3 text-xs font-bold text-muted uppercase tracking-wide">N° commande</th>
-            <th class="text-left px-5 py-3 text-xs font-bold text-muted uppercase tracking-wide">Client</th>
-            <th class="text-left px-5 py-3 text-xs font-bold text-muted uppercase tracking-wide">Île / Ville</th>
+            <th class="text-left px-5 py-3 text-xs font-bold text-muted uppercase tracking-wide">Commandé par</th>
+            <th class="text-left px-5 py-3 text-xs font-bold text-muted uppercase tracking-wide">Destinataire</th>
             <th class="text-left px-5 py-3 text-xs font-bold text-muted uppercase tracking-wide">Date</th>
             <th class="text-right px-5 py-3 text-xs font-bold text-muted uppercase tracking-wide">Total</th>
             <th class="text-left px-5 py-3 text-xs font-bold text-muted uppercase tracking-wide">Statut</th>
@@ -139,12 +139,26 @@
             <tr class="border-b border-border last:border-0 hover:bg-surface-alt/40 transition-colors">
               <td class="px-5 py-3 font-mono text-xs font-bold text-primary">{{ order.id }}</td>
               <td class="px-5 py-3">
-                <p class="font-semibold text-foreground text-sm">{{ order.customer.prenom }} {{ order.customer.nom }}</p>
-                <p class="text-xs text-muted">{{ order.customer.telephone }}</p>
+                @if (order.orderedBy) {
+                  <div class="flex items-center gap-1.5 mb-1">
+                    <p class="font-semibold text-foreground text-sm">{{ order.orderedBy.prenom }} {{ order.orderedBy.nom }}</p>
+                    @if (order.orderedBy.type === 'account') {
+                      <span class="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">Compte</span>
+                    } @else {
+                      <span class="text-[10px] font-bold bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-full">Invité</span>
+                    }
+                  </div>
+                  <p class="text-xs text-muted">{{ order.orderedBy.telephone }}</p>
+                  @if (order.orderedBy.email) {
+                    <p class="text-xs text-muted">{{ order.orderedBy.email }}</p>
+                  }
+                } @else {
+                  <p class="text-xs text-muted italic">—</p>
+                }
               </td>
               <td class="px-5 py-3 text-xs text-foreground">
-                <p>{{ order.customer.ile }}</p>
-                <p class="text-muted">{{ order.customer.ville }}</p>
+                <p class="font-semibold text-foreground text-sm">{{ order.recipient.prenom }} {{ order.recipient.nom }}</p>
+                <p class="text-muted">{{ order.recipient.ile }}, {{ order.recipient.ville }}</p>
               </td>
               <td class="px-5 py-3 text-xs text-muted whitespace-nowrap">{{ order.date | date:'dd/MM/yy HH:mm' }}</td>
               <td class="px-5 py-3 text-right font-bold text-primary whitespace-nowrap">
@@ -264,19 +278,38 @@
           }
         </div>
 
-        <!-- Client -->
+        <!-- Commandé par -->
+        @if (selectedOrder()!.orderedBy) {
+          <div class="bg-surface-alt rounded-2xl p-4 flex flex-col gap-2">
+            <p class="text-xs font-bold text-muted uppercase tracking-wide mb-1">Commandé par</p>
+            <div class="flex items-center gap-2">
+              <p class="font-semibold text-foreground">{{ selectedOrder()!.orderedBy!.prenom }} {{ selectedOrder()!.orderedBy!.nom }}</p>
+              @if (selectedOrder()!.orderedBy!.type === 'account') {
+                <span class="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">Compte client</span>
+              } @else {
+                <span class="text-[10px] font-bold bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">Invité</span>
+              }
+            </div>
+            <p class="text-sm text-muted">📞 {{ selectedOrder()!.orderedBy!.telephone }}</p>
+            @if (selectedOrder()!.orderedBy!.email) {
+              <p class="text-sm text-muted">✉️ {{ selectedOrder()!.orderedBy!.email }}</p>
+            }
+          </div>
+        }
+
+        <!-- Destinataire (livraison) -->
         <div class="bg-surface-alt rounded-2xl p-4 flex flex-col gap-2">
-          <p class="text-xs font-bold text-muted uppercase tracking-wide mb-1">Destinataire</p>
-          <p class="font-semibold text-foreground">{{ selectedOrder()!.customer.prenom }} {{ selectedOrder()!.customer.nom }}</p>
-          <p class="text-sm text-muted">📞 {{ selectedOrder()!.customer.telephone }}</p>
-          @if (selectedOrder()!.customer.email) {
-            <p class="text-sm text-muted">✉️ {{ selectedOrder()!.customer.email }}</p>
+          <p class="text-xs font-bold text-muted uppercase tracking-wide mb-1">Destinataire (livraison)</p>
+          <p class="font-semibold text-foreground">{{ selectedOrder()!.recipient.prenom }} {{ selectedOrder()!.recipient.nom }}</p>
+          <p class="text-sm text-muted">📞 {{ selectedOrder()!.recipient.telephone }}</p>
+          @if (selectedOrder()!.recipient.email) {
+            <p class="text-sm text-muted">✉️ {{ selectedOrder()!.recipient.email }}</p>
           }
-          <p class="text-sm text-muted">🏝️ {{ selectedOrder()!.customer.ile }}</p>
-          <p class="text-sm text-muted">📍 {{ selectedOrder()!.customer.ville }} — {{ selectedOrder()!.customer.adresse }}</p>
-          @if (selectedOrder()!.customer.instructions) {
+          <p class="text-sm text-muted">🏝️ {{ selectedOrder()!.recipient.ile }}</p>
+          <p class="text-sm text-muted">📍 {{ selectedOrder()!.recipient.ville }} — {{ selectedOrder()!.recipient.adresse }}</p>
+          @if (selectedOrder()!.recipient.instructions) {
             <p class="text-xs text-muted bg-white rounded-xl px-3 py-2 border border-border mt-1">
-              💬 {{ selectedOrder()!.customer.instructions }}
+              💬 {{ selectedOrder()!.recipient.instructions }}
             </p>
           }
         </div>
