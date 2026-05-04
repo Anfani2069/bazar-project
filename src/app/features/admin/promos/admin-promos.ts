@@ -52,7 +52,7 @@ export class AdminPromos {
     this.editingCode.set(null);
   }
 
-  protected save(): void {
+  protected async save(): Promise<void> {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const v = this.form.getRawValue();
     const data: PromoCode = {
@@ -64,27 +64,27 @@ export class AdminPromos {
     };
     const orig = this.editingCode();
     if (orig) {
-      this.promoService.update(orig, data);
+      await this.promoService.update(orig, data);
       this.notifService.success('Code promo modifié.');
     } else {
-      this.promoService.add(data);
+      await this.promoService.add(data);
       this.notifService.success('Code promo créé.');
     }
     this.closeDrawer();
   }
 
-  protected toggle(code: string): void {
-    this.promoService.toggle(code);
+  protected async toggle(code: string): Promise<void> {
+    await this.promoService.toggle(code);
     this.notifService.info('Statut du code mis à jour.');
   }
 
   protected askDelete(code: string): void  { this.deleteCode.set(code); }
   protected cancelDelete(): void           { this.deleteCode.set(null); }
 
-  protected confirmDelete(): void {
+  protected async confirmDelete(): Promise<void> {
     const code = this.deleteCode();
     if (code) {
-      this.promoService.remove(code);
+      await this.promoService.remove(code);
       this.notifService.success('Code promo supprimé.');
     }
     this.deleteCode.set(null);

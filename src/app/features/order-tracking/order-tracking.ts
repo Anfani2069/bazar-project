@@ -2,8 +2,9 @@ import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@a
 import { FormsModule } from '@angular/forms';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
+import { getApp } from 'firebase/app';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
 
-import { OrderService } from '@features/admin/services/order.service';
 import type { Order, OrderStatus } from '@shared/models';
 
 const STATUS_STEPS: { status: OrderStatus; label: string; icon: string; desc: string }[] = [
@@ -24,11 +25,12 @@ const STATUS_ORDER: Record<OrderStatus, number> = {
   imports: [FormsModule, CurrencyPipe, DatePipe, RouterLink],
 })
 export class OrderTracking {
-  private readonly orderService = inject(OrderService);
-  private readonly route        = inject(ActivatedRoute);
+  private readonly db    = getFirestore(getApp());
+  private readonly route = inject(ActivatedRoute);
 
   protected readonly query       = signal('');
   protected readonly searched    = signal(false);
+  protected readonly searching   = signal(false);
   protected readonly order       = signal<Order | null>(null);
   protected readonly statusSteps = STATUS_STEPS;
 
@@ -43,12 +45,24 @@ export class OrderTracking {
     return STATUS_ORDER[o.status] ?? -1;
   });
 
-  protected search(): void {
+  protected async search(): Promise<void> {
     const q = this.query().trim().toUpperCase();
     if (!q) return;
-    const found = this.orderService.orders().find(o => o.id.toUpperCase() === q) ?? null;
-    this.order.set(found);
-    this.searched.set(true);
+
+    this.searching.set(true);
+    this.searched.set(false);
+    this.order.set(null);
+
+    try {
+      const snap = await getDoc(doc(this.db, 'orders', q));
+      this.order.set(snap.exists() ? (snap.data() as Order) : null);
+    } catch (err) {
+      console.error('[OrderTracking] Firestore error:', err);
+      this.order.set(null);
+    } finally {
+      this.searching.set(false);
+      this.searched.set(true);
+    }
   }
 
   protected statusClass(s: OrderStatus): string {

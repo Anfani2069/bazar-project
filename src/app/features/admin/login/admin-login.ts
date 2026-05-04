@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { ADMIN_TOKEN_KEY, ADMIN_CREDENTIALS } from '../guards/admin-auth.guard';
+import { AdminAuthService } from '../services/admin-auth.service';
 
 @Component({
   selector: 'admin-login',
@@ -11,8 +11,9 @@ import { ADMIN_TOKEN_KEY, ADMIN_CREDENTIALS } from '../guards/admin-auth.guard';
   imports: [ReactiveFormsModule],
 })
 export class AdminLogin {
-  private readonly fb     = inject(FormBuilder);
-  private readonly router = inject(Router);
+  private readonly fb        = inject(FormBuilder);
+  private readonly router    = inject(Router);
+  private readonly adminAuth = inject(AdminAuthService);
 
   protected readonly error   = signal('');
   protected readonly loading = signal(false);
@@ -22,19 +23,20 @@ export class AdminLogin {
     password: ['', Validators.required],
   });
 
-  protected submit(): void {
+  protected async submit(): Promise<void> {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.loading.set(true);
     this.error.set('');
 
     const { email, password } = this.form.value;
+    const res = await this.adminAuth.login(email ?? '', password ?? '');
 
-    if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
-      localStorage.setItem(ADMIN_TOKEN_KEY, btoa(`${email}:${Date.now()}`));
-      this.router.navigate(['/admin/dashboard']);
-    } else {
-      this.error.set('Identifiants incorrects.');
+    if (!res.ok) {
+      this.error.set(res.error ?? 'Identifiants incorrects.');
       this.loading.set(false);
+      return;
     }
+
+    this.router.navigate(['/admin/dashboard']);
   }
 }

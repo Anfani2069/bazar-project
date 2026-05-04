@@ -1,50 +1,48 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, NgZone, computed, inject, signal } from '@angular/core';
+import { getApp } from 'firebase/app';
+import { getFirestore, collection, onSnapshot,
+         doc, setDoc, updateDoc, deleteDoc, writeBatch } from 'firebase/firestore';
 
 import type { Product } from '@shared/models';
 import { ALL_PRODUCTS, CATEGORIES as BASE_CATEGORIES } from '@features/catalogue/products.data';
 
-const STORAGE_KEY = 'bazar_products';
-
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private readonly _products = signal<Product[]>(this.load());
+  private readonly db       = getFirestore(getApp());
+  private readonly zone     = inject(NgZone);
+  private readonly _products = signal<Product[]>([]);
 
-  readonly products   = this._products.asReadonly();
+  readonly products = this._products.asReadonly();
+
+  constructor() {
+    onSnapshot(collection(this.db, 'products'), snap => {
+      this.zone.run(() => this._products.set(snap.docs.map(d => d.data() as Product)));
+    });
+  }
 
   readonly categories = computed(() => {
-    const set     = new Set(this._products().map(p => p.category).filter(Boolean) as string[]);
+    const set     = new Set(this.products().map(p => p.category).filter(Boolean) as string[]);
     const ordered = BASE_CATEGORIES.filter(c => c !== 'Tous' && set.has(c));
     const extra   = [...set].filter(c => !BASE_CATEGORIES.includes(c));
     return ['Tous', ...ordered, ...extra];
   });
 
-  private load(): Product[] {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return JSON.parse(raw) as Product[];
-    } catch { /**/ }
-    return [...ALL_PRODUCTS];
+  async add(p: Omit<Product, 'id'>): Promise<void> {
+    const id = 'adm-' + Date.now();
+    await setDoc(doc(this.db, 'products', id), { id, ...p });
   }
 
-  private save(list: Product[]): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    this._products.set([...list]);
+  async update(id: string, changes: Partial<Omit<Product, 'id'>>): Promise<void> {
+    await updateDoc(doc(this.db, 'products', id), { ...changes });
   }
 
-  add(p: Omit<Product, 'id'>): void {
-    this.save([...this._products(), { id: 'adm-' + Date.now(), ...p }]);
+  async remove(id: string): Promise<void> {
+    await deleteDoc(doc(this.db, 'products', id));
   }
 
-  update(id: string, changes: Partial<Omit<Product, 'id'>>): void {
-    this.save(this._products().map(p => p.id === id ? { ...p, ...changes } : p));
-  }
-
-  remove(id: string): void {
-    this.save(this._products().filter(p => p.id !== id));
-  }
-
-  reset(): void {
-    localStorage.removeItem(STORAGE_KEY);
-    this._products.set([...ALL_PRODUCTS]);
+  async reset(): Promise<void> {
+    const batch = writeBatch(this.db);
+    ALL_PRODUCTS.forEach(p => batch.set(doc(this.db, 'products', p.id), p));
+    await batch.commit();
   }
 }

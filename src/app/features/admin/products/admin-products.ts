@@ -88,7 +88,7 @@ export class AdminProducts {
     this.editingId.set(null);
   }
 
-  protected save(): void {
+  protected async save(): Promise<void> {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const v = this.form.getRawValue();
     const data: Omit<Product, 'id'> = {
@@ -104,10 +104,10 @@ export class AdminProducts {
     };
     const id = this.editingId();
     if (id) {
-      this.productService.update(id, data);
+      await this.productService.update(id, data);
       this.notifService.success('Produit modifié avec succès.');
     } else {
-      this.productService.add(data);
+      await this.productService.add(data);
       this.notifService.success('Produit ajouté au catalogue.');
     }
     this.closeDrawer();
@@ -116,10 +116,10 @@ export class AdminProducts {
   protected askDelete(id: string): void { this.deleteId.set(id); }
   protected cancelDelete(): void        { this.deleteId.set(null); }
 
-  protected confirmDelete(): void {
+  protected async confirmDelete(): Promise<void> {
     const id = this.deleteId();
     if (id) {
-      this.productService.remove(id);
+      await this.productService.remove(id);
       this.notifService.success('Produit supprimé.');
     }
     this.deleteId.set(null);
@@ -128,8 +128,8 @@ export class AdminProducts {
   protected openResetConfirm(): void  { this.resetConfirm.set(true);  }
   protected cancelReset(): void       { this.resetConfirm.set(false); }
 
-  protected confirmReset(): void {
-    this.productService.reset();
+  protected async confirmReset(): Promise<void> {
+    await this.productService.reset();
     this.resetConfirm.set(false);
     this.notifService.info('Catalogue réinitialisé avec les données par défaut.');
   }

@@ -13,6 +13,35 @@
     <!-- Card -->
     <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
 
+      <!-- Bouton Google -->
+      <div class="px-6 pt-6 pb-4">
+        <button type="button" (click)="submitGoogle()" [disabled]="authLoading()"
+                class="w-full py-3 rounded-xl border-2 border-border bg-white font-semibold text-sm
+                       hover:border-primary/40 hover:bg-surface-alt transition-colors disabled:opacity-60
+                       flex items-center justify-center gap-3">
+          @if (authLoading()) {
+            <svg class="animate-spin w-4 h-4 text-muted" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+            </svg>
+            Connexion en cours…
+          } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            Continuer avec Google
+          }
+        </button>
+        <div class="flex items-center gap-3 mt-4">
+          <hr class="flex-1 border-border" />
+          <span class="text-xs text-muted">ou avec e-mail</span>
+          <hr class="flex-1 border-border" />
+        </div>
+      </div>
+
       <!-- Tabs -->
       <div class="grid grid-cols-2 border-b border-border">
         <button type="button"
@@ -36,6 +65,19 @@
       </div>
 
       <div class="p-6">
+
+        <!-- Erreur globale -->
+        @if (authError()) {
+          <div class="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700
+                      rounded-xl px-4 py-3 text-sm mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 class="shrink-0">
+              <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+            {{ authError() }}
+          </div>
+        }
 
         <!-- ── Connexion ── -->
         @if (activeTab() === 'login') {
@@ -74,11 +116,19 @@
               }
             </div>
 
-            <button type="submit"
+            <button type="submit" [disabled]="authLoading()"
                     class="w-full py-3 rounded-xl bg-primary text-white font-semibold text-sm
                            hover:bg-primary-hover active:scale-[0.98] transition-all mt-1
-                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-              Se connecter
+                           disabled:opacity-60 disabled:cursor-wait flex items-center justify-center gap-2">
+              @if (authLoading()) {
+                <svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                </svg>
+                Connexion en cours…
+              } @else {
+                Se connecter
+              }
             </button>
 
           </form>
@@ -89,22 +139,56 @@
           <form [formGroup]="registerForm" (ngSubmit)="submitRegister()" novalidate
                 class="flex flex-col gap-4">
 
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label for="reg-prenom" class="block text-sm font-medium text-foreground mb-1.5">
+                  Prénom <span class="text-error">*</span>
+                </label>
+                <input id="reg-prenom" type="text" formControlName="prenom" placeholder="Ali"
+                       class="w-full px-4 py-2.5 rounded-xl border-2 text-sm text-foreground
+                              placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+                       [class.border-error]="hasError('register', 'prenom')"
+                       [class.border-border]="!hasError('register', 'prenom')" />
+                @if (hasError('register', 'prenom')) {
+                  <p class="text-xs text-error mt-1">Requis</p>
+                }
+              </div>
+              <div>
+                <label for="reg-nom" class="block text-sm font-medium text-foreground mb-1.5">
+                  Nom <span class="text-error">*</span>
+                </label>
+                <input id="reg-nom" type="text" formControlName="nom" placeholder="Abdou"
+                       class="w-full px-4 py-2.5 rounded-xl border-2 text-sm text-foreground
+                              placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+                       [class.border-error]="hasError('register', 'nom')"
+                       [class.border-border]="!hasError('register', 'nom')" />
+                @if (hasError('register', 'nom')) {
+                  <p class="text-xs text-error mt-1">Requis</p>
+                }
+              </div>
+            </div>
+
             <div>
-              <label for="reg-name" class="block text-sm font-medium text-foreground mb-1.5">
-                Nom complet
+              <label for="reg-tel" class="block text-sm font-medium text-foreground mb-1.5">
+                Téléphone <span class="text-error">*</span>
               </label>
-              <input id="reg-name" type="text" formControlName="name"
-                     placeholder="Votre nom"
-                     class="w-full px-4 py-2.5 rounded-xl border-2 text-sm text-foreground
-                            placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary
-                            transition-colors"
-                     [class.border-error]="hasError('register', 'name')"
-                     [class.border-border]="!hasError('register', 'name')" />
+              <div class="flex rounded-xl border-2 overflow-hidden focus-within:border-primary transition-colors"
+                   [class.border-error]="hasError('register', 'telephone')"
+                   [class.border-border]="!hasError('register', 'telephone')">
+                <span class="px-3 flex items-center bg-surface-alt text-sm text-muted shrink-0 border-r border-border">
+                  🇰🇲 +269
+                </span>
+                <input id="reg-tel" type="tel" formControlName="telephone" placeholder="321 00 00"
+                       class="flex-1 px-3 py-2.5 text-sm text-foreground bg-white focus:outline-none" />
+              </div>
+              @if (hasError('register', 'telephone')) {
+                <p class="text-xs text-error mt-1">Requis</p>
+              }
             </div>
 
             <div>
               <label for="reg-email" class="block text-sm font-medium text-foreground mb-1.5">
-                Adresse e-mail
+                Adresse e-mail <span class="text-error">*</span>
               </label>
               <input id="reg-email" type="email" formControlName="email"
                      placeholder="votre@email.com"
@@ -120,7 +204,7 @@
 
             <div>
               <label for="reg-pwd" class="block text-sm font-medium text-foreground mb-1.5">
-                Mot de passe
+                Mot de passe <span class="text-error">*</span>
               </label>
               <input id="reg-pwd" type="password" formControlName="password"
                      placeholder="Minimum 6 caractères"
@@ -134,11 +218,19 @@
               }
             </div>
 
-            <button type="submit"
+            <button type="submit" [disabled]="authLoading()"
                     class="w-full py-3 rounded-xl bg-primary text-white font-semibold text-sm
                            hover:bg-primary-hover active:scale-[0.98] transition-all mt-1
-                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-              Créer mon compte
+                           disabled:opacity-60 disabled:cursor-wait flex items-center justify-center gap-2">
+              @if (authLoading()) {
+                <svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                </svg>
+                Création en cours…
+              } @else {
+                Créer mon compte
+              }
             </button>
 
           </form>

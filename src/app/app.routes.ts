@@ -38,6 +38,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/order-tracking/order-tracking').then(m => m.OrderTracking),
   },
   {
+    path: 'mes-commandes',
+    loadComponent: () => import('./features/mes-commandes/mes-commandes').then(m => m.MesCommandes),
+  },
+  {
     path: '**',
     redirectTo: '',
   },

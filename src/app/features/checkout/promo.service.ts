@@ -1,4 +1,6 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, NgZone, inject, signal } from '@angular/core';
+import { getApp } from 'firebase/app';
+import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, updateDoc } from 'firebase/firestore';
 
 export type PromoType = 'percent' | 'fixed';
 
@@ -10,30 +12,22 @@ export interface PromoCode {
   active:     boolean;
 }
 
-const STORAGE_KEY = 'bazar_promos';
-
-const DEFAULT_PROMOS: PromoCode[] = [];
-
 @Injectable({ providedIn: 'root' })
 export class PromoService {
-  private readonly _promos = signal<PromoCode[]>(this.load());
+  private readonly db   = getFirestore(getApp());
+  private readonly zone = inject(NgZone);
+
+  private readonly _promos = signal<PromoCode[]>([]);
   readonly promos = this._promos.asReadonly();
 
-  private load(): PromoCode[] {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return JSON.parse(raw) as PromoCode[];
-    } catch { /**/ }
-    return [...DEFAULT_PROMOS];
-  }
-
-  private save(list: PromoCode[]): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    this._promos.set([...list]);
+  constructor() {
+    onSnapshot(collection(this.db, 'promos'), snap => {
+      this.zone.run(() => this._promos.set(snap.docs.map(d => d.data() as PromoCode)));
+    });
   }
 
   validate(code: string, subtotal: number): { valid: true; promo: PromoCode } | { valid: false; error: string } {
-    const promo = this._promos().find(p => p.code === code.trim().toUpperCase());
+    const promo = this.promos().find(p => p.code === code.trim().toUpperCase());
     if (!promo)         return { valid: false, error: 'Code promo introuvable.' };
     if (!promo.active)  return { valid: false, error: 'Ce code promo est désactivé.' };
     if (promo.minOrder && subtotal < promo.minOrder)
@@ -46,17 +40,23 @@ export class PromoService {
     return Math.min(promo.value, subtotal);
   }
 
-  add(p: PromoCode): void {
-    this.save([...this._promos(), { ...p, code: p.code.trim().toUpperCase() }]);
+  async add(p: PromoCode): Promise<void> {
+    const code = p.code.trim().toUpperCase();
+    await setDoc(doc(this.db, 'promos', code), { ...p, code });
   }
 
-  update(original: string, p: PromoCode): void {
-    this.save(this._promos().map(x => x.code === original ? { ...p, code: p.code.trim().toUpperCase() } : x));
+  async update(original: string, p: PromoCode): Promise<void> {
+    const newCode = p.code.trim().toUpperCase();
+    if (original !== newCode) await deleteDoc(doc(this.db, 'promos', original));
+    await setDoc(doc(this.db, 'promos', newCode), { ...p, code: newCode });
   }
 
-  remove(code: string): void { this.save(this._promos().filter(p => p.code !== code)); }
+  async remove(code: string): Promise<void> {
+    await deleteDoc(doc(this.db, 'promos', code));
+  }
 
-  toggle(code: string): void {
-    this.save(this._promos().map(p => p.code === code ? { ...p, active: !p.active } : p));
+  async toggle(code: string): Promise<void> {
+    const promo = this.promos().find(p => p.code === code);
+    if (promo) await updateDoc(doc(this.db, 'promos', code), { active: !promo.active });
   }
 }

@@ -10,9 +10,10 @@ export interface OrderItem {
 }
 
 export interface Order {
-  id:     string;
-  date:   string;
-  status: OrderStatus;
+  id:      string;
+  date:    string;
+  userId?: string;
+  status:  OrderStatus;
   orderedBy?: {
     prenom:    string;
     nom:       string;

@@ -100,16 +100,16 @@ export class AdminOrders {
   protected openOrder(o: Order): void         { this.selectedOrder.set(o); }
   protected closeOrder(): void                { this.selectedOrder.set(null); }
 
-  protected updateStatus(id: string, status: OrderStatus): void {
-    this.orderService.updateStatus(id, status);
+  protected async updateStatus(id: string, status: OrderStatus): Promise<void> {
+    await this.orderService.updateStatus(id, status);
     const updated = this.orderService.orders().find(o => o.id === id);
-    if (updated) this.selectedOrder.set(updated);
+    if (updated) this.selectedOrder.set({ ...updated, status });
   }
 
-  protected quickStatus(event: Event, id: string): void {
+  protected async quickStatus(event: Event, id: string): Promise<void> {
     event.stopPropagation();
     const val = (event.target as HTMLSelectElement).value as OrderStatus;
-    this.updateStatus(id, val);
+    await this.updateStatus(id, val);
   }
 
   readonly allStatuses: { value: OrderStatus; label: string }[] = [

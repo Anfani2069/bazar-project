@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -7,6 +7,7 @@ import { CartService } from '@features/cart/cart.service';
 import { OrderService } from '@features/admin/services/order.service';
 import { PromoService } from './promo.service';
 import { CustomerAuthService } from '@shared/services/customer-auth.service';
+import { EmailService } from '@shared/services/email.service';
 import type { Order } from '@shared/models';
 import type { PromoCode } from './promo.service';
 
@@ -44,14 +45,28 @@ export class Checkout {
   protected readonly cartService    = inject(CartService);
   private  readonly orderService    = inject(OrderService);
   private  readonly promoService    = inject(PromoService);
-  readonly  authService             = inject(CustomerAuthService);
+  private  readonly emailService    = inject(EmailService);
+  protected readonly authService     = inject(CustomerAuthService);
   private  readonly fb              = inject(FormBuilder);
 
   protected readonly guestMode      = signal<'guest' | 'account' | null>(null);
   protected readonly authPanel      = signal<'login' | 'register' | null>(null);
   protected readonly authError      = signal('');
+  protected readonly authLoading    = signal(false);
   protected readonly guestPanel     = signal(false);
   protected readonly orderedBy      = signal<Order['orderedBy'] | null>(null);
+
+  constructor() {
+    effect(() => {
+      const user = this.authService.currentUser();
+      if (user && this.guestMode() === null) {
+        this.orderedBy.set({ prenom: user.prenom, nom: user.nom,
+                             telephone: user.telephone, email: user.email, type: 'account' });
+        this.guestMode.set('account');
+      }
+    });
+    this.authService.loadProfileForCurrentUser();
+  }
   protected readonly step           = signal<Step>(1);
   protected readonly paymentMethod  = signal<PaymentMethod>('carte');
   protected readonly deliveryOption = signal<DeliveryOption>('domicile');
@@ -62,8 +77,9 @@ export class Checkout {
 
   protected readonly couponInput    = signal('');
   protected readonly appliedPromo   = signal<PromoCode | null>(null);
-  protected readonly couponError    = signal('');
-  protected readonly couponSuccess  = signal(false);
+  protected readonly couponError      = signal('');
+  protected readonly couponSuccess    = signal(false);
+  protected readonly placeOrderError  = signal('');
 
   protected readonly checkoutSteps   = CHECKOUT_STEPS;
   protected readonly deliveryOptions = DELIVERY_OPTIONS;
@@ -176,10 +192,26 @@ export class Checkout {
     password:  ['', [Validators.required, Validators.minLength(6)]],
   });
 
-  protected submitLogin(): void {
+  protected async submitGoogle(): Promise<void> {
+    this.authLoading.set(true);
+    this.authError.set('');
+    const res = await this.authService.loginWithGoogle();
+    this.authLoading.set(false);
+    if (!res.ok) { this.authError.set(res.error ?? 'Erreur Google.'); return; }
+    const u = this.authService.currentUser()!;
+    this.orderedBy.set({ prenom: u.prenom, nom: u.nom,
+                         telephone: u.telephone, email: u.email, type: 'account' });
+    this.guestMode.set('account');
+    this.authPanel.set(null);
+  }
+
+  protected async submitLogin(): Promise<void> {
     if (this.loginForm.invalid) { this.loginForm.markAllAsTouched(); return; }
+    this.authLoading.set(true);
+    this.authError.set('');
     const { email, password } = this.loginForm.getRawValue();
-    const res = this.authService.login(email ?? '', password ?? '');
+    const res = await this.authService.login(email ?? '', password ?? '');
+    this.authLoading.set(false);
     if (!res.ok) { this.authError.set(res.error ?? 'Erreur.'); return; }
     const u = this.authService.currentUser()!;
     this.orderedBy.set({ prenom: u.prenom, nom: u.nom,
@@ -188,16 +220,19 @@ export class Checkout {
     this.authPanel.set(null);
   }
 
-  protected submitRegister(): void {
+  protected async submitRegister(): Promise<void> {
     if (this.registerForm.invalid) { this.registerForm.markAllAsTouched(); return; }
+    this.authLoading.set(true);
+    this.authError.set('');
     const v = this.registerForm.getRawValue();
-    const res = this.authService.register({
+    const res = await this.authService.register({
       prenom:    v.prenom    ?? '',
       nom:       v.nom       ?? '',
       email:     v.email     ?? '',
       telephone: v.telephone ?? '',
       password:  v.password  ?? '',
     });
+    this.authLoading.set(false);
     if (!res.ok) { this.authError.set(res.error ?? 'Erreur.'); return; }
     this.orderedBy.set({ prenom: v.prenom ?? '', nom: v.nom ?? '',
                          telephone: v.telephone ?? '', email: v.email || undefined, type: 'account' });
@@ -227,16 +262,19 @@ export class Checkout {
     return this.deliveryForm.valid;
   }
 
-  protected placeOrder(): void {
-    const ref = 'BC-' + Date.now().toString(36).toUpperCase().slice(-6);
+  protected async placeOrder(): Promise<void> {
+    this.placeOrderError.set('');
+    const ref = 'BC-' + Date.now().toString(36).toUpperCase()
+              + Math.random().toString(36).slice(2, 5).toUpperCase();
     const f   = this.deliveryForm.value;
     const del = this.selectedDelivery();
 
     const order: Order = {
-      id:   ref,
-      date: new Date().toISOString(),
+      id:     ref,
+      date:   new Date().toISOString(),
+      userId: this.authService.currentUser()?.id,
       status: 'pending',
-      orderedBy:  this.orderedBy() ?? undefined,
+      orderedBy: this.orderedBy() ?? undefined,
       recipient: {
         prenom:        f['prenom'] ?? '',
         nom:           f['nom'] ?? '',
@@ -264,7 +302,17 @@ export class Checkout {
       total:     this.orderTotal(),
     };
 
-    this.orderService.addOrder(order);
+    try {
+      await this.orderService.addOrder(order);
+    } catch (err) {
+      console.error('[Checkout] Failed to save order:', err);
+      this.placeOrderError.set('Une erreur est survenue. Votre commande n\'a pas été enregistrée. Veuillez réessayer.');
+      return;
+    }
+
+    const email = f['email'] || this.authService.currentUser()?.email || '';
+    this.emailService.sendOrderConfirmation(order, email);
+
     this.orderNumber.set(ref);
     this.confirmedName.set(`${f['prenom']} ${f['nom']}`);
     this.confirmedIle.set(f['ile'] ?? '');
