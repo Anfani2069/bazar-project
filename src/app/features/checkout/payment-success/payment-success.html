@@ -1,0 +1,142 @@
+<div class="min-h-screen bg-surface-alt flex items-start justify-center">
+  <div class="w-full max-w-xl mx-auto px-4 py-12">
+
+    <!-- ──────────── Chargement ──────────── -->
+    @if (loading()) {
+      <div class="flex flex-col items-center gap-4 py-24">
+        <div class="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+        <p class="text-muted text-sm">Confirmation de votre paiement…</p>
+      </div>
+    }
+
+    <!-- ──────────── Erreur ──────────── -->
+    @if (!loading() && error()) {
+      <div class="flex flex-col items-center gap-4 py-16 text-center">
+        <span class="text-5xl">⚠️</span>
+        <p class="text-foreground font-bold text-lg">{{ error() }}</p>
+        <a routerLink="/commande"
+           class="mt-2 px-6 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm
+                  hover:bg-primary-hover transition-colors">
+          Retour à la commande
+        </a>
+      </div>
+    }
+
+    <!-- ──────────── Succès ──────────── -->
+    @if (!loading() && !error() && order()) {
+      <div class="flex flex-col items-center gap-6 text-center">
+
+        <!-- Icône succès -->
+        <div class="w-20 h-20 rounded-full bg-success/10 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round"
+               class="text-success" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+
+        <div>
+          <p class="text-xs font-bold text-accent uppercase tracking-widest mb-2">Paiement confirmé</p>
+          <h1 class="text-3xl font-black text-foreground">Merci pour votre commande !</h1>
+          <p class="text-muted text-sm mt-2">
+            Votre paiement a été accepté. Nous préparons votre commande avec soin.
+          </p>
+        </div>
+
+        <!-- Numéro de commande -->
+        <div class="bg-primary/5 border border-primary/20 rounded-2xl px-8 py-4 w-full">
+          <p class="text-xs text-muted mb-1">Numéro de commande</p>
+          <p class="text-2xl font-black text-primary tracking-wider">{{ order()!.id }}</p>
+        </div>
+
+        <!-- Récapitulatif -->
+        <div class="w-full bg-white rounded-2xl shadow-sm p-6 text-left flex flex-col gap-4">
+
+          <!-- Articles -->
+          <div>
+            <p class="text-xs font-bold text-muted uppercase tracking-wide mb-2">Articles</p>
+            <div class="flex flex-col gap-2">
+              @for (item of order()!.items; track item.productId) {
+                <div class="flex items-center gap-2.5 text-sm">
+                  @if (item.imageUrl) {
+                    <img [src]="item.imageUrl" [alt]="item.name"
+                         class="w-8 h-8 object-contain rounded shrink-0" />
+                  } @else {
+                    <span class="text-lg" aria-hidden="true">{{ item.emoji ?? '🛒' }}</span>
+                  }
+                  <span class="flex-1 text-foreground truncate">{{ item.name }}</span>
+                  <span class="text-muted shrink-0">× {{ item.quantity }}</span>
+                  <span class="font-semibold text-primary shrink-0">
+                    {{ (item.price * item.quantity) | currency:'EUR':'symbol':'1.2-2' }}
+                  </span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Livraison -->
+          <div class="border-t border-border pt-4 flex flex-col gap-1">
+            <p class="text-xs font-bold text-muted uppercase tracking-wide">Livraison</p>
+            <p class="text-sm font-semibold text-foreground">
+              {{ order()!.recipient.prenom }} {{ order()!.recipient.nom }}
+            </p>
+            <p class="text-sm text-muted">
+              {{ order()!.recipient.ile }} · {{ order()!.recipient.ville }}
+            </p>
+            <p class="text-sm text-muted">{{ order()!.delivery.label }}</p>
+          </div>
+
+          <!-- Paiement -->
+          <div class="border-t border-border pt-4 flex flex-col gap-1">
+            <p class="text-xs font-bold text-muted uppercase tracking-wide">Paiement</p>
+            <p class="text-sm font-semibold text-foreground flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                   fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round" class="text-success" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Paiement sécurisé via Stripe
+            </p>
+          </div>
+
+          <!-- Total -->
+          <div class="border-t border-border pt-4 flex justify-between items-center">
+            <span class="text-sm font-bold text-foreground">Total payé</span>
+            <span class="text-xl font-black text-primary">
+              {{ order()!.total | currency:'EUR':'symbol':'1.2-2' }}
+            </span>
+          </div>
+
+        </div>
+
+        <!-- Suivi -->
+        <a [routerLink]="['/suivi']" [queryParams]="{id: order()!.id}"
+           class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent/10 border border-accent/30
+                  text-primary font-semibold text-sm hover:bg-accent/20 transition-colors w-full justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          Suivre ma commande
+        </a>
+
+        <!-- Actions -->
+        <div class="flex flex-col sm:flex-row gap-3 w-full">
+          <a routerLink="/"
+             class="flex-1 py-3 rounded-xl border-2 border-primary text-primary font-semibold text-sm
+                    hover:bg-primary hover:text-white transition-all text-center">
+            Retour à l'accueil
+          </a>
+          <a routerLink="/catalogue"
+             class="flex-1 py-3 rounded-xl bg-primary text-white font-semibold text-sm
+                    hover:bg-primary-hover transition-colors text-center">
+            Continuer mes achats
+          </a>
+        </div>
+
+      </div>
+    }
+
+  </div>
+</div>

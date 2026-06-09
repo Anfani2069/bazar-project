@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
+import { SearchService } from '@shared/services/search.service';
 
 import { ProductCard } from '@shared/ui/product-card/product-card';
 import type { Product } from '@shared/models';
@@ -25,27 +27,40 @@ type SortKey = 'name' | 'price-asc' | 'price-desc';
   imports: [ProductCard],
 })
 export class Catalogue {
-  private  readonly cartService     = inject(CartService);
-  private  readonly productService  = inject(ProductService);
+  private  readonly cartService    = inject(CartService);
+  private  readonly productService = inject(ProductService);
+  private  readonly searchService  = inject(SearchService);
   protected readonly categories     = this.productService.categories;
   protected readonly activeCategory = signal('Tous');
   protected readonly sortBy         = signal<SortKey>('name');
 
   constructor() {
-    const param = inject(ActivatedRoute).snapshot.queryParamMap.get('categorie');
-    if (param && PARAM_TO_CATEGORY[param]) {
-      this.activeCategory.set(PARAM_TO_CATEGORY[param]);
-    }
+    inject(ActivatedRoute).queryParamMap
+      .pipe(takeUntilDestroyed())
+      .subscribe(params => {
+        const param = params.get('categorie');
+        this.activeCategory.set(param && PARAM_TO_CATEGORY[param] ? PARAM_TO_CATEGORY[param] : 'Tous');
+        const q = params.get('q');
+        if (q) this.searchService.query.set(q);
+      });
   }
 
   protected readonly filteredProducts = computed(() => {
     const cat      = this.activeCategory();
     const sort     = this.sortBy();
     const products = this.productService.products();
+    const q        = this.searchService.query().trim().toLowerCase();
 
     let list = cat === 'Tous'
       ? products
       : products.filter(p => p.category === cat);
+
+    if (q) {
+      list = list.filter(p =>
+        p.name.toLowerCase().includes(q) ||
+        (p.description?.toLowerCase().includes(q) ?? false)
+      );
+    }
 
     return [...list].sort((a, b) => {
       if (sort === 'price-asc')  return a.price - b.price;

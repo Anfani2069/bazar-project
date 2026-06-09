@@ -7,12 +7,13 @@ import { CartService } from '@features/cart/cart.service';
 import { OrderService } from '@features/admin/services/order.service';
 import { PromoService } from './promo.service';
 import { CustomerAuthService } from '@shared/services/customer-auth.service';
+import { StripeService } from '@shared/services/stripe.service';
 import { EmailService } from '@shared/services/email.service';
 import type { Order } from '@shared/models';
 import type { PromoCode } from './promo.service';
 
 export type Step           = 1 | 2 | 3 | 4;
-export type PaymentMethod  = 'carte' | 'paypal';
+export type PaymentMethod  = 'stripe' | 'paypal';
 export type DeliveryOption = 'domicile' | 'relais' | 'express';
 
 export interface DeliveryChoice {
@@ -45,8 +46,9 @@ export class Checkout {
   protected readonly cartService    = inject(CartService);
   private  readonly orderService    = inject(OrderService);
   private  readonly promoService    = inject(PromoService);
-  private  readonly emailService    = inject(EmailService);
   protected readonly authService     = inject(CustomerAuthService);
+  private  readonly stripeService   = inject(StripeService);
+  private  readonly emailService    = inject(EmailService);
   private  readonly fb              = inject(FormBuilder);
 
   protected readonly guestMode      = signal<'guest' | 'account' | null>(null);
@@ -68,7 +70,8 @@ export class Checkout {
     this.authService.loadProfileForCurrentUser();
   }
   protected readonly step           = signal<Step>(1);
-  protected readonly paymentMethod  = signal<PaymentMethod>('carte');
+  protected readonly paymentMethod  = signal<PaymentMethod>('stripe');
+  protected readonly stripeLoading  = signal(false);
   protected readonly deliveryOption = signal<DeliveryOption>('domicile');
   protected readonly orderNumber    = signal('');
   protected readonly confirmedName  = signal('');
@@ -107,13 +110,6 @@ export class Checkout {
     ville:        ['', Validators.required],
     adresse:      ['', Validators.required],
     instructions: [''],
-  });
-
-  protected readonly cardForm = this.fb.group({
-    numero:     ['', [Validators.required, Validators.pattern(/^[\d\s]{19}$/)]],
-    titulaire:  ['', Validators.required],
-    expiration: ['', [Validators.required, Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/)]],
-    cvv:        ['', [Validators.required, Validators.pattern(/^\d{3,4}$/)]],
   });
 
   protected stepCircleClass(num: number): string {
@@ -310,22 +306,46 @@ export class Checkout {
       return;
     }
 
-    const email = f['email'] || this.authService.currentUser()?.email || '';
-    this.emailService.sendOrderConfirmation(order, email);
-
-    this.orderNumber.set(ref);
-    this.confirmedName.set(`${f['prenom']} ${f['nom']}`);
-    this.confirmedIle.set(f['ile'] ?? '');
-    this.confirmedVille.set(f['ville'] ?? '');
-    this.cartService.clear();
-    this.step.set(4);
+    if (this.paymentMethod() === 'stripe') {
+      await this.redirectToStripe(order);
+    } else {
+      this.orderNumber.set(ref);
+      this.confirmedName.set(`${f['prenom']} ${f['nom']}`);
+      this.confirmedIle.set(f['ile'] ?? '');
+      this.confirmedVille.set(f['ville'] ?? '');
+      this.cartService.clear();
+      this.step.set(4);
+      const customerEmail = order.orderedBy?.email ?? order.recipient.email ?? '';
+      if (customerEmail) {
+        this.emailService.sendOrderConfirmation(order, customerEmail);
+      }
+      this.emailService.sendAdminNotification(order);
+    }
   }
 
-  protected formatCardNumber(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const raw   = input.value.replace(/\D/g, '').slice(0, 16);
-    input.value = raw.replace(/(\d{4})(?=\d)/g, '$1 ');
-    this.cardForm.get('numero')?.setValue(input.value, { emitEvent: false });
+  private async redirectToStripe(order: Order): Promise<void> {
+    this.stripeLoading.set(true);
+    this.placeOrderError.set('');
+    try {
+      const origin     = window.location.origin;
+      const result     = await this.stripeService.createCheckoutSession({
+        orderId:    order.id,
+        currency:   'eur',
+        successUrl: `${origin}/commande/success`,
+        cancelUrl:  `${origin}/panier`,
+        items: order.items.map(i => ({
+          name:     i.name,
+          price:    i.price,
+          quantity: i.quantity,
+          imageUrl: i.imageUrl?.startsWith('http') ? i.imageUrl : undefined,
+        })),
+      });
+      this.stripeService.redirectToCheckout(result.url);
+    } catch (err) {
+      console.error('[Checkout] Stripe error:', err);
+      this.stripeLoading.set(false);
+      this.placeOrderError.set('Erreur lors de la redirection vers Stripe. Veuillez réessayer.');
+    }
   }
 
   protected setCouponInput(e: Event): void {
@@ -354,8 +374,8 @@ export class Checkout {
 
   protected paymentLabel(): string {
     const labels: Record<PaymentMethod, string> = {
-      'carte':   '💳 Carte bancaire',
-      'paypal':  '🅿️ PayPal',
+      'stripe': '💳 Stripe (carte bancaire)',
+      'paypal': '🅿️ PayPal',
     };
     return labels[this.paymentMethod()];
   }

@@ -749,101 +749,73 @@
                 </div>
               </div>
 
-              <!-- Carte bancaire -->
-              <button type="button" (click)="setPayment('carte')" [class]="paymentCardClass('carte')">
-                <span class="text-2xl" aria-hidden="true">💳</span>
+              <!-- Stripe (carte bancaire) -->
+              <button type="button" (click)="setPayment('stripe')" [class]="paymentCardClass('stripe')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round"
+                     class="text-primary shrink-0" aria-hidden="true">
+                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                  <line x1="1" y1="10" x2="23" y2="10"/>
+                </svg>
                 <div class="flex-1 text-left">
-                  <p class="text-sm font-semibold text-foreground">Carte bancaire</p>
-                  <p class="text-xs text-muted">Visa · Mastercard · CB</p>
+                  <p class="text-sm font-semibold text-foreground">Carte bancaire — Stripe</p>
+                  <p class="text-xs text-muted">Visa · Mastercard · CB · paiement sécurisé</p>
                 </div>
                 <div class="w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center"
-                     [class]="paymentMethod() === 'carte' ? 'border-primary' : 'border-border'">
-                  @if (paymentMethod() === 'carte') {
+                     [class]="paymentMethod() === 'stripe' ? 'border-primary' : 'border-border'">
+                  @if (paymentMethod() === 'stripe') {
                     <div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
                   }
                 </div>
               </button>
 
-              <!-- Formulaire carte -->
-              @if (paymentMethod() === 'carte') {
-                <form [formGroup]="cardForm"
-                      class="bg-surface-alt rounded-xl p-4 flex flex-col gap-3 border border-border">
-
-                  <!-- Numéro de carte -->
-                  <div class="flex flex-col gap-1.5">
-                    <label class="text-xs font-bold text-foreground uppercase tracking-wide">
-                      Numéro de carte <span class="text-error">*</span>
-                    </label>
-                    <div class="flex rounded-xl border-2 border-border overflow-hidden focus-within:border-primary transition-colors bg-white">
-                      <span class="px-3 flex items-center text-muted shrink-0" aria-hidden="true">💳</span>
-                      <input type="text" formControlName="numero"
-                             placeholder="1234 5678 9012 3456"
-                             maxlength="19"
-                             (input)="formatCardNumber($event)"
-                             class="flex-1 px-2 py-2.5 text-sm font-mono text-foreground bg-white
-                                    focus:outline-none placeholder:text-muted/50 tracking-wider" />
-                    </div>
-                    @if (cardForm.get('numero')?.invalid && cardForm.get('numero')?.touched) {
-                      <p class="text-xs text-error">Numéro de carte invalide</p>
-                    }
-                  </div>
-
-                  <!-- Titulaire -->
-                  <div class="flex flex-col gap-1.5">
-                    <label class="text-xs font-bold text-foreground uppercase tracking-wide">
-                      Nom sur la carte <span class="text-error">*</span>
-                    </label>
-                    <input type="text" formControlName="titulaire"
-                           placeholder="EX : JEAN DUPONT"
-                           class="px-4 py-2.5 rounded-xl border-2 border-border text-sm text-foreground
-                                  bg-white uppercase focus:outline-none focus:border-primary transition-colors
-                                  placeholder:text-muted/50 placeholder:normal-case" />
-                    @if (cardForm.get('titulaire')?.invalid && cardForm.get('titulaire')?.touched) {
-                      <p class="text-xs text-error">Nom du titulaire requis</p>
-                    }
-                  </div>
-
-                  <!-- Expiration + CVV -->
-                  <div class="grid grid-cols-2 gap-3">
-                    <div class="flex flex-col gap-1.5">
-                      <label class="text-xs font-bold text-foreground uppercase tracking-wide">
-                        Date d'expiration <span class="text-error">*</span>
-                      </label>
-                      <input type="text" formControlName="expiration"
-                             placeholder="MM/AA"
-                             maxlength="5"
-                             class="px-4 py-2.5 rounded-xl border-2 border-border text-sm font-mono
-                                    text-foreground bg-white focus:outline-none focus:border-primary
-                                    transition-colors placeholder:text-muted/50 placeholder:font-sans" />
-                      @if (cardForm.get('expiration')?.invalid && cardForm.get('expiration')?.touched) {
-                        <p class="text-xs text-error">Format MM/AA</p>
-                      }
-                    </div>
-                    <div class="flex flex-col gap-1.5">
-                      <label class="text-xs font-bold text-foreground uppercase tracking-wide">
-                        CVV <span class="text-error">*</span>
-                      </label>
-                      <input type="password" formControlName="cvv"
-                             placeholder="•••"
-                             maxlength="4"
-                             class="px-4 py-2.5 rounded-xl border-2 border-border text-sm font-mono
-                                    text-foreground bg-white focus:outline-none focus:border-primary
-                                    transition-colors placeholder:text-muted/50" />
-                      @if (cardForm.get('cvv')?.invalid && cardForm.get('cvv')?.touched) {
-                        <p class="text-xs text-error">CVV invalide</p>
-                      }
-                    </div>
-                  </div>
-
-                  <p class="text-xs text-muted flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+              <!-- Info Stripe -->
+              @if (paymentMethod() === 'stripe') {
+                <div class="bg-primary/5 rounded-xl p-4 border border-primary/20 flex flex-col gap-3">
+                  <div class="flex items-start gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                          fill="none" stroke="currentColor" stroke-width="2"
-                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                      <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                         stroke-linecap="round" stroke-linejoin="round"
+                         class="text-primary shrink-0 mt-0.5" aria-hidden="true">
+                      <rect x="3" y="11" width="18" height="11" rx="2"/>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                     </svg>
-                    Paiement sécurisé SSL — vos données ne sont jamais stockées.
-                  </p>
-                </form>
+                    <div>
+                      <p class="text-sm font-semibold text-foreground">Paiement hébergé par Stripe</p>
+                      <p class="text-xs text-muted mt-0.5">
+                        Vous serez redirigé vers la page de paiement sécurisée de Stripe.
+                        Vos données bancaires ne transitent jamais par nos serveurs.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3 text-xs text-muted">
+                    <span class="flex items-center gap-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24"
+                           fill="none" stroke="currentColor" stroke-width="2.5"
+                           stroke-linecap="round" stroke-linejoin="round" class="text-success">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                      SSL 256-bit
+                    </span>
+                    <span class="flex items-center gap-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24"
+                           fill="none" stroke="currentColor" stroke-width="2.5"
+                           stroke-linecap="round" stroke-linejoin="round" class="text-success">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                      PCI-DSS compliant
+                    </span>
+                    <span class="flex items-center gap-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24"
+                           fill="none" stroke="currentColor" stroke-width="2.5"
+                           stroke-linecap="round" stroke-linejoin="round" class="text-success">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                      3D Secure
+                    </span>
+                  </div>
+                </div>
               }
 
               <!-- PayPal -->
@@ -961,16 +933,30 @@
               </div>
             }
 
-            <button type="button" (click)="placeOrder()"
-                    class="w-full py-3 rounded-xl bg-primary text-white font-semibold text-sm
-                           hover:bg-primary-hover active:scale-[0.98] transition-all
-                           flex items-center justify-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                   fill="none" stroke="currentColor" stroke-width="2.5"
-                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-              Confirmer la commande
+            <button type="button" (click)="placeOrder()" [disabled]="stripeLoading()"
+                    [class]="'w-full py-3 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 ' +
+                             (stripeLoading()
+                               ? 'bg-primary/60 text-white cursor-not-allowed'
+                               : 'bg-primary text-white hover:bg-primary-hover active:scale-[0.98]')">
+              @if (stripeLoading()) {
+                <span class="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin"></span>
+                Redirection vers Stripe…
+              } @else if (paymentMethod() === 'stripe') {
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2.5"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                  <line x1="1" y1="10" x2="23" y2="10"/>
+                </svg>
+                Payer avec Stripe
+              } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2.5"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Confirmer la commande
+              }
             </button>
 
             <div class="flex items-center justify-center gap-1.5 text-muted">
@@ -982,8 +968,8 @@
               <span class="text-xs">Commande 100% sécurisée</span>
             </div>
 
-            <button type="button" (click)="prevStep()"
-                    class="text-xs text-center text-muted hover:text-primary transition-colors">
+            <button type="button" (click)="prevStep()" [disabled]="stripeLoading()"
+                    class="text-xs text-center text-muted hover:text-primary transition-colors disabled:opacity-50">
               ← Retour
             </button>
           </div>

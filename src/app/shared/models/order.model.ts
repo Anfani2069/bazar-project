@@ -34,7 +34,9 @@ export interface Order {
   delivery: { method: string; label: string; cost: number };
   payment:  { method: string; label: string };
   items:    OrderItem[];
-  subtotal:  number;
-  discount?: { code: string; amount: number };
-  total:     number;
+  subtotal:         number;
+  discount?:        { code: string; amount: number };
+  total:            number;
+  stripeSessionId?: string;
+  paidAt?:          string;
 }

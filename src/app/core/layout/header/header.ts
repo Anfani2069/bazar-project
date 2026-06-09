@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { CartService } from '@features/cart/cart.service';
 import { CustomerAuthService } from '@shared/services/customer-auth.service';
+import { SearchService } from '@shared/services/search.service';
 
 const NAV_LINKS = [
   { label: 'Accueil',             path: '/',                  exact: true  },
@@ -23,12 +24,32 @@ export class Header {
   private  readonly cartService  = inject(CartService);
   private  readonly authService  = inject(CustomerAuthService);
   private  readonly router       = inject(Router);
-  protected readonly cartCount   = this.cartService.totalCount;
-  protected readonly isMenuOpen  = signal(false);
-  protected readonly currentUser = this.authService.currentUser;
+  private  readonly searchService  = inject(SearchService);
+  protected readonly cartCount      = this.cartService.totalCount;
+  protected readonly isMenuOpen     = signal(false);
+  protected readonly currentUser    = this.authService.currentUser;
+  protected readonly searchQuery = this.searchService.query;
 
   protected toggleMenu(): void {
     this.isMenuOpen.update(open => !open);
+  }
+
+  protected onQueryInput(value: string): void {
+    this.searchService.query.set(value);
+    if (!this.router.url.startsWith('/catalogue')) {
+      this.router.navigate(['/catalogue']);
+    }
+  }
+
+  protected search(): void {
+    if (!this.router.url.startsWith('/catalogue')) {
+      this.router.navigate(['/catalogue']);
+    }
+    this.isMenuOpen.set(false);
+  }
+
+  protected onSearchKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') this.search();
   }
 
   protected async logout(): Promise<void> {

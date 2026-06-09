@@ -62,30 +62,25 @@ export const ALL_PRODUCTS: Product[] = [
     description: 'Racine séchée et moulue aux propriétés digestives et réchauffantes. Parfume thés, plats mijotés et marinades selon la tradition comorienne. Un allié santé reconnu.',
   },
   {
-    id: 'c1', name: 'Riz Onicor IR64 — 5 kg', price: 8.50,
-    imageUrl: 'img/riz-onicor.png',
-    category: 'Céréales', unit: '5kg', badge: 'best-seller', originalPrice: 10.50,
-    description: 'Riz grain long blanc importé par l\'Onicor (Office National d\'Importation et de Commercialisation du Riz). Variété IR64 double poli, 10% brisures. L\'incontournable des tables comoriennes.',
+    id: 'c1c', name: 'Riz Onicor IR64 — 25 kg', price: 33.55,
+    imageUrl: 'img/riz-onikor-25kg.png',
+    category: 'Céréales', unit: '25 kg',
+    description: 'Grand sac 25 kg de riz Onicor IR64. Format professionnel idéal pour les restaurateurs, épiceries et grandes familles. Riz grain long double poli, qualité constante et irréprochable.',
   },
   {
-    id: 'c2', name: 'Farine de manioc', price: 4.50, emoji: '🫙',
-    category: 'Céréales', unit: '1kg',
-    description: 'Farine sans gluten extraite du manioc frais. Alternative naturelle à la farine de blé pour les personnes intolérantes. Utilisée pour préparer galettes, beignets et plats traditionnels.',
-  },
-  {
-    id: 'c3', name: 'Farine de blé — 25 kg', price: 18.00,
+    id: 'c3', name: 'Farine', price: 29.50,
     imageUrl: 'img/Farine-25kilo.png',
     category: 'Céréales', unit: 'sac 25 kg',
     description: 'Farine de blé tout usage en grand format 25 kg, idéale pour les boulangeries, restaurants et foyers. Parfaite pour les mkatra, galettes, pains et pâtisseries comoriennes.',
   },
   {
-    id: 'c4', name: 'Macaroni — Pâtes alimentaires', price: 1.80,
+    id: 'c4', name: 'Macaroni — Pâtes alimentaires', price: 0.80,
     imageUrl: 'img/Macaroni-patte.png',
     category: 'Céréales', unit: 'paquet 500g',
     description: 'Pâtes macaroni de qualité supérieure, cuisson rapide. Incontournables de la cuisine du quotidien, idéaux en gratin, soupe ou sautés. Riches en glucides complexes.',
   },
   {
-    id: 'r1', name: 'Riz Basmati Malika — 1 kg', price: 2.80,
+    id: 'r1', name: 'Riz Basmati Malika — 1 kg', price: 3.65,
     imageUrl: 'img/riz-basmati-malika-1kilo.png',
     category: 'Céréales', unit: '1 kg', badge: 'new',
     description: 'Riz basmati extra long grain de la marque Malika. Arôme délicat, grains fins et non collants à la cuisson. Format 1 kg pratique pour les petits foyers.',
@@ -97,9 +92,9 @@ export const ALL_PRODUCTS: Product[] = [
     description: 'Grand sac de riz basmati Malika 10 kg. Grains longs parfumés, idéals pour le riz pilaf, biriani et plats festifs. Qualité premium, rapport qualité-prix excellent.',
   },
   {
-    id: 'r3', name: 'Riz Basmati Malika — 20 kg', price: 38.00,
+    id: 'r3', name: 'Riz Basmati Malika — 20 kg', price: 58.40,
     imageUrl: 'img/basmati-malika-20kilo.png',
-    category: 'Céréales', unit: '20 kg', badge: 'promo', originalPrice: 44.00,
+    category: 'Céréales', unit: '20 kg',
     description: 'Format familial 20 kg de riz basmati Malika. Idéal pour les familles nombreuses et les restaurateurs. Riz long grain premium, arôme de basmati authentique.',
   },
   {
@@ -115,7 +110,7 @@ export const ALL_PRODUCTS: Product[] = [
     description: 'Riz basmati Sultan 10 kg, référence des tables comoriennes. Grain extra long, parfum subtil, texture légère et aérée. La marque Sultan est gage de qualité depuis des années.',
   },
   {
-    id: 'r6', name: 'Riz Basmati Sultan — 20 kg', price: 42.00,
+    id: 'r6', name: 'Riz Basmati Sultan — 20 kg', price: 58.40,
     imageUrl: 'img/basmati-sultan-20kilo.png',
     category: 'Céréales', unit: '20 kg',
     description: 'Grand format 20 kg de riz basmati Sultan. Idéal pour les familles et les restaurants. Grain long parfumé, qualité constante et irréprochable.',
@@ -139,13 +134,13 @@ export const ALL_PRODUCTS: Product[] = [
     description: 'Lait de la marque Nura, riche en calcium et en vitamines essentielles. Incontournable des petits-déjeuners et gouters comoriens. Texture onctueuse, goût doux et savoureux.',
   },
   {
-    id: 'n9', name: 'Oeufs frais', price: 3.20,
+    id: 'n9', name: 'Oeufs frais', price: 8.75,
     imageUrl: 'img/oeufs.png',
-    category: 'Naturels', unit: 'boîte 12 oeufs', badge: 'new',
+    category: 'Naturels', unit: 'boîte 30 oeufs', badge: 'new',
     description: 'Oeufs frais du jour, élevés localement. Essentiels en cuisine : omelettes, gateaux, plats mijotés, mkatra et pâtisseries comoriennes. Source de protéines de haute qualité.',
   },
   {
-    id: 'n7', name: 'Sucre blanc — 5 kg', price: 6.50,
+    id: 'n7', name: 'Sucre blanc — 5 kg', price: 10.20,
     imageUrl: 'img/sucre-5kilo.png',
     category: 'Naturels', unit: 'sac 5 kg',
     description: 'Sucre blanc cristallisé en sac 5 kg. Produit de première nécessité dans chaque foyer comorien. Pour le thé, le café, les pâtisseries et toutes les préparations sucrées.',
@@ -162,7 +157,7 @@ export const ALL_PRODUCTS: Product[] = [
     description: 'Pâte de tomates pure et naturelle Al Mudhish, concentrée à 24%. Présentation en sachets pratiques de 70g. Incontournable des cuisines comoriennes pour les sauces, ragouts et plats mijotés.',
   },
   {
-    id: 'n3', name: 'Lait concentré sucré OKI', price: 2.90,
+    id: 'n3', name: 'Lait concentré sucré OKI', price: 1.30,
     imageUrl: 'img/Lait concentre.png',
     category: 'Naturels', unit: '400g',
     description: 'Lait concentré sucré de la marque OKI, riche en vitamines A et D, source de calcium. Incontournable du thé et café comoriens, des desserts et des crêpes. Texture onctueuse et goût doux.',
@@ -174,13 +169,13 @@ export const ALL_PRODUCTS: Product[] = [
     description: 'Beurre clarifié (ghee) de qualité supérieure, indispensable de la cuisine comorienne. Parfait pour les fritures, les mkatra foutra, les samoussas et les gâteaux de fête. Saveur riche et dorée.',
   },
   {
-    id: 'h4', name: 'Huile végétale — 1 L', price: 2.50,
+    id: 'h4', name: 'Huile végétale — 1 L', price: 1.70,
     imageUrl: 'img/huile-1l.png',
     category: 'Huiles', unit: 'bouteille 1 L', badge: 'promo', originalPrice: 3.20,
     description: 'Huile végétale raffinée polyvalente en bouteille 1 L. Légère, au goût neutre, idéale pour toutes les cuissons : friture, sauté, assaisonnement. Incontournable du quotidien.',
   },
   {
-    id: 'h5', name: 'Huile végétale — 5 L', price: 10.50,
+    id: 'h5', name: 'Huile végétale — 5 L', price: 16.05,
     imageUrl: 'img/huile-5litre.png',
     category: 'Huiles', unit: 'bidon 5 L', badge: 'best-seller',
     description: 'Grand bidon d’huile végétale 5 L, économique et pratique pour les familles et restaurateurs. Idéale pour les fritures, sautés et préparations comorienne au quotidien.',
@@ -201,7 +196,7 @@ export const ALL_PRODUCTS: Product[] = [
     description: 'Poisson pêché dans les eaux cristallines de l\'océan Indien, séché selon la méthode traditionnelle comorienne. Concentré en saveurs, il enrichit bouillons, sauces et plats mijotés.',
   },
   {
-    id: 'p4', name: 'Sardines Delmonaco à l\'huile', price: 1.20,
+    id: 'p4', name: 'Sardines Delmonaco à l\'huile', price: 4.25,
     imageUrl: 'img/sardine.png',
     category: 'Poissons', unit: 'boîte 125g',
     description: 'Sardines entières à l\'huile végétale, marque Delmonaco. Riches en oméga-3 et protéines. Un classique des épiceries comoriennes, idéal avec du riz blanc ou en salade. Boîte facile à ouvrir.',
@@ -223,19 +218,19 @@ export const ALL_PRODUCTS: Product[] = [
     description: 'Thon des eaux comoriennes séché artisanalement selon les traditions locales. Chair dense et savoureuse. Parfait émietté dans les salades, sauces ou en accompagnement de riz.',
   },
   {
-    id: 'n4', name: 'Lait en poudre Melody — Sachet', price: 1.20,
+    id: 'n4', name: 'Lait en poudre Melody — Sachet', price: 0.35,
     imageUrl: 'img/melody-en-sachet.png',
     category: 'Naturels', unit: 'sachet',
     description: 'Lait en poudre entier Melody en sachet individuel. Format pratique et économique, idéal pour le thé, le café ou la bouillie. Très populaire dans les foyers comoriens.',
   },
   {
-    id: 'n5', name: 'Lait en poudre Melody — Moyen', price: 5.50,
+    id: 'n5', name: 'Lait en poudre Melody — Moyen', price: 16.05,
     imageUrl: 'img/Lait-en-poudre-melody-moyen.png',
     category: 'Naturels', unit: 'boîte 400g',
     description: 'Lait entier en poudre Melody, format moyen 400g. Riche en calcium et vitamines. Parfait pour le petit-déjeuner, les desserts et la préparation de boissons lactées.',
   },
   {
-    id: 'n6', name: 'Lait en poudre Melody — Grand format', price: 10.50,
+    id: 'n6', name: 'Lait en poudre Melody — Grand format', price: 30.65,
     imageUrl: 'img/grande-melody.png',
     category: 'Naturels', unit: 'boîte 900g', badge: 'best-seller',
     description: 'Grande boîte de lait entier en poudre Melody 900g. Format familial économique. Qualité constante, riche en nutriments essentiels. La référence des épiceries comoriennes.',
@@ -270,6 +265,24 @@ export const ALL_PRODUCTS: Product[] = [
     category: 'Café', unit: 'paquet 250g', badge: 'new',
     description: 'Café moulú sélectionné, torréfaction médium. Arôme intense et saveur équilibrée, idéal pour la cafetière, la cafetière à piston ou le café filtré. Incontournable du matin comorien.',
   },
+  {
+    id: 'v1', name: 'Ailes de poulet congelées — 10 kg', price: 34.00,
+    imageUrl: 'img/ailes de poulet - 10 kg.png',
+    category: 'Viandes', unit: 'carton 10 kg', badge: 'new',
+    description: 'Ailes de poulet congelées en carton de 10 kg. Idéales pour les grillades, fritures et plats en sauce. Produit de qualité, conditionnement hygiénique. Livraison rapide sur toutes les îles.',
+  },
+  {
+    id: 'v2', name: 'Cuisses de poulet congelées — 10 kg', price: 38.00,
+    imageUrl: 'img/cuisse-de-poulet-10kg.png',
+    category: 'Viandes', unit: 'carton 10 kg', badge: 'best-seller',
+    description: 'Cuisses de poulet congelées en carton de 10 kg. Morceau incontournable de la cuisine comorienne, idéal pour le poulet yassa, en sauce ou grillé. Chair tendre et savoureuse.',
+  },
+  {
+    id: 'v3', name: 'Viande Al Asad — 10 kg', price: 79.00,
+    imageUrl: 'img/viande.png',
+    category: 'Viandes', unit: 'carton 10 kg',
+    description: 'Viande bovine Al Asad en carton de 10 kg net. Viande halal de qualité supérieure, idéale pour les grandes occasions, les repas de famille et les restaurateurs. Conditionnement soigné.',
+  },
 ];
 
-export const CATEGORIES = ['Tous', 'Légumes', 'Fruits', 'Épices', 'Céréales', 'Naturels', 'Huiles', 'Poissons', 'Boissons', 'Café'];
+export const CATEGORIES = ['Tous', 'Légumes', 'Fruits', 'Épices', 'Céréales', 'Naturels', 'Huiles', 'Poissons', 'Viandes', 'Boissons', 'Café'];

@@ -1,7 +1,7 @@
 import { Injectable, NgZone, computed, inject, signal } from '@angular/core';
 import { getApp } from 'firebase/app';
 import { getFirestore, collection, onSnapshot,
-         doc, setDoc, updateDoc, deleteDoc, writeBatch } from 'firebase/firestore';
+         doc, setDoc, updateDoc, deleteDoc, writeBatch, deleteField } from 'firebase/firestore';
 
 import type { Product } from '@shared/models';
 import { ALL_PRODUCTS, CATEGORIES as BASE_CATEGORIES } from '@features/catalogue/products.data';
@@ -33,7 +33,11 @@ export class ProductService {
   }
 
   async update(id: string, changes: Partial<Omit<Product, 'id'>>): Promise<void> {
-    await updateDoc(doc(this.db, 'products', id), { ...changes });
+    const payload: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(changes)) {
+      payload[key] = value === undefined ? deleteField() : value;
+    }
+    await updateDoc(doc(this.db, 'products', id), payload);
   }
 
   async remove(id: string): Promise<void> {

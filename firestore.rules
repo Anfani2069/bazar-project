@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null &&
+             exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isGuestOrder(data) {
+      return !('userId' in data) || data.userId == null;
+    }
+
+    // Customers can only read/write their own profile
+    match /customers/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Orders: authenticated users write their own; guests allowed without auth;
+    // admins read/update all; guest orders readable by anyone with the orderId
+    match /orders/{orderId} {
+      allow create: if (request.auth != null && request.resource.data.userId == request.auth.uid)
+                    || isGuestOrder(request.resource.data);
+
+      allow read: if isAdmin()
+                  || (request.auth != null && resource.data.userId == request.auth.uid)
+                  || isGuestOrder(resource.data);
+
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+
+    // Products: public read, admin write only
+    match /products/{productId} {
+      allow read:  if true;
+      allow write: if isAdmin();
+    }
+
+    // Promos: public read (needed for checkout validation), admin write
+    match /promos/{code} {
+      allow read:  if true;
+      allow write: if isAdmin();
+    }
+
+    // Admins collection: no client-side writes — manage via Firebase Console only
+    match /admins/{uid} {
+      allow read:  if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+  }
+}
